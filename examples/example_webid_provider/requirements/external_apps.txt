@@ -1,0 +1,6 @@
+--requirement=libs.txt
+
+#M2Crypto==0.20.2
+pyOpenSSL==0.10
+django-uni-form==0.6.0
+#django-staticfiles==0.1.2

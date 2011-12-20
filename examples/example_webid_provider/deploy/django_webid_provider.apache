@@ -1,0 +1,33 @@
+<VirtualHost *:80>
+        ServerName yourserver.org
+        WSGIDaemonProcess webid_provider-production user=webid_provider group=webid_provider threads=10 python-path=/srv/django/yourserver.org/webid_provider-env/lib/python2.5/site-packages
+
+        Alias /admin-media/ /usr/lib/python2.7/dist-packages/django/contrib/admin/media/
+        <Directory /usr/lib/python2.7/dist-packages/django/contrib/admin/media/>
+	        Order deny,allow
+	        Allow from all
+	</Directory>
+
+        Alias /static/uni_form/ /usr/local/lib/python2.7/dist-packages/django_uni_form-0.9.0-py2.7.egg/uni_form/static/uni_form/
+        <Directory /usr/local/lib/python2.7/dist-packages/django_uni_form-0.9.0-py2.7.egg/uni_form/static/uni_form/>
+        Order deny,allow
+        Allow from all
+        </Directory>
+
+        Alias /static/webid_provider/ /srv/www/django/foafgen/django-webid-provider/webid_provider/media/webid_provider/
+        <Directory /srv/www/django/foafgen/django-webid-provider/webid_provider/media/webid_provider/>
+        Order deny,allow
+        Allow from all
+        </Directory>
+
+
+        WSGIProcessGroup webid_provider-production
+        WSGIScriptAlias / /srv/django/yourserver.org/releases/current/examples/webid_provider/deploy/webid_provider.wsgi
+        <Directory /srv/django/yourserver.org/releases/current/examples/webid_provider/deploy>
+            Order deny,allow
+            Allow from all
+        </Directory>
+        ErrorLog /srv/django/yourserver.org/var/log/error.log
+        LogLevel warn
+        CustomLog /srv/django/yourserver.org/var/log/access.log combined
+</VirtualHost>

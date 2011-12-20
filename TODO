@@ -1,0 +1,27 @@
+TODO
+
+***path re-packaging***
+
+django_webid
+
+pip package:: django-webid
+    -webid (or djwebid ??)
+	webid.provider
+	webid.auth
+	webid.users?
+
+>>> FOR THIS:
+
+namespace packages 
+
+http://peak.telecommunity.com/DevCenter/setuptools#namespace-packages
+http://www.python.org/dev/peps/pep-0382/
+
+https://github.com/LangaCore/kitdjango/blob/master/src/lck/django/namespace_package_support.py
+
+
+##################
+
+Extra features:
+- Confirm email: integration with django-email-confirm (or something like that)
+- pkcs12 fallback (more insecure)

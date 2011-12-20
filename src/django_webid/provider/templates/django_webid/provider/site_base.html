@@ -1,0 +1,16 @@
+{% extends "django_webid/provider/base_site.html" %}
+
+{% load i18n %}
+
+{% block extra_head_base %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}django_webid/provider/css/site_tabs.css" />
+    {% block extra_head %}{% endblock %}
+{% endblock %}
+
+{% block login %}
+<p>hello, {{user.username}}</p>
+{% endblock %}
+
+{% block extra_body_base %}
+    {% block extra_body %}{% endblock %}
+{% endblock %}

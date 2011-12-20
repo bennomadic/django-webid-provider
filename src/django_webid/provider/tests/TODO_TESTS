@@ -1,0 +1,6 @@
+1) Write test for KeyGen CERT creation
+	- We can control serial number since it's the first one in the db.
+	- We need to take control also of the DATETIME object (allow overriding).
+- Check that, with the same spkac, it gives the same cert object (fingerprint and so on).
+- Check that, if tampering wight Challenge, cert will fail.
+- Check that, if bad signature, verify cert will fail

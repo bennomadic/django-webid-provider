@@ -1,0 +1,148 @@
+"TICKETS"
+
+1. [ done ] 
+   Models for PUBKEYS. Links to users.
+
+2. [ done ]
+   Models for profiles/users
+   (Proxy Models to User; Abstract; WebIdIdentity, 
+
+2.1 [     ] See what to do with PROFILE
+	    - Avoid Abstract thing.
+   
+2.2 [     ]
+    Separate (extern, hosted).
+
+2.3 [     ]
+    dependency management.
+    >>>> THINK WHAT TO DO WITH
+    >>>> DEPENDENCIES between -auth and -certs.
+    >>>> USERS AS A DIFFERENT MODULE?
+    -- hmm different packages, common namespace ??
+
+3.  [     ]
+    Describe cases for createuser views.
+
+   - open register, only webid auth for regular users (we can put random chars in password).
+   - regular (password-based) password; login + create cert.
+   - Create on-the-fly (create user first; ajax for check nick availability).
+   - ...
+   - This should be a table of flags (from settings or admin iface).
+   - Create a decorator for the functions??? 
+
+4. [    ]
+   Views for add/remove cert.
+   	[ done ] add
+	[      ] remove
+	[      ] links with certs
+	[      ] cert table
+   [      ] Popups.
+   [ done ] Views in admin.
+
+4.5 [    ]
+    FIX CHALLENGE IN SPKAC VIEWS!!!
+    ---> maybe the contrib.signing features in django-dev
+    might be useful here???
+
+5. [ done ]
+   Methods for iterating over user PubKeys. 
+   To be used in foaf publishing.
+
+6. [    ]
+   Think a way of retrieving the base URI for WebID (we need it to put in cert). Reverse or setting.
+
+7. [ done ]
+   WebId publishing (basic; needed for automated testing of webid-auth).
+   Can act as fallback
+   Maybe just nick + name + pubkeys.
+
+   [ ... ]
+   We NEED TO DEFINE A SWITCH FLAG (in SETTINGS?) to define
+   which view is in charge of rendering the profile (CURRENTLY WE ARE REVERSING THE FOAF RENDERING PROFILE TO GET THE WEBID_URI)
+
+8. [ done ]
+   Create a TEMPLATETAG for displaying (publishing) the keys 
+   - as rdf+xml [ ...  ]
+   - as RDFa    [ DONE ]
+   - as TURTLE  [ ...  ]
+   - should use lxml instead of the template-ish snippets... :)
+
+   - Content Negotiation!
+
+9. [  ]
+   Config interface in admin
+   - [ done ] Setting defaults for parameters
+   - [ done ] DEFINE SETTINGS NEEDED IN THE LOCAL-SETTINGS + SENSIBLE DEFAULTS
+   - [ done ] refactor cert creation (class)
+   - [ ...  ] admin inlines. 
+
+10. [     ]
+   - TESTSUITE...
+   - at least for the core cert functions.
+   - would be nice to have before merging the 2 modules
+   and working on advanced features...
+
+11. [     ]
+    - DOCS !! (sphinx)
+
+12. [ done ]
+    - FIX chrome crash BUG... :(
+
+13. Default SITE. Signal change? We need to be aware of the site 
+    we're being served from.
+
+Extras:
++++++++
+
+8.  [    ]
+    control more parameters of cert generation (like expiring).
+    advanced view in the form
+
+9.  [    ]
+    email verification as 2nd token.
+    (do they want it??)
+
+10. [    ]
+    Code cleaning.
+    m2crypto vs. openssl wrappers.
+. 
+11. Security auditing.
+
+12. [ done   ] IMPORTANT!!
+
+	IE FUCKING SUPPORT. pkcs10.
+
+13. Test deployment + make sure it works out-of-the-box
+    ---> with minimal configuration...
+
+14. [    ]
+	Automatic cert creation??? (ie, no user input?)
+	[ done ] jQuery hack
+	[      ] try with iframe
+
+15. Expiration tasks... (to notify users)
+
+16. Something for re-using admin jQuery?
+
+17. Improve Common name selection:
+	- username + "@site url???"
+	- free user input? (so he remembers)
+
+Later:
+++++++++
+
+14. HTTP(S) support on URIS.
+    the user.absolute_webid_uri property only allows HTTP now (it's hardcoded).
+    In the NEAR future it would be useful if we can serve the webid over https (depending on a flag).
+    As a workaround, we can redirect selectively (we might be using that for the auth module).
+
+
+Cool things
+++++++++++++
+
+15. Koremutake strings support in the list certs.
+
+16. fix media (media collect command also)
+
+17. QR generation :) http://pypi.python.org/pypi/django-qrcode/0.3
+	- I don't like about that: it's using external api for qrcode.

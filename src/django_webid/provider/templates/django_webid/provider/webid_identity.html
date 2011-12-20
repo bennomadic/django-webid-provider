@@ -1,0 +1,48 @@
+{% extends "django_webid/provider/base.html" %}
+
+{% load i18n %}
+
+{% load uni_form_tags %}
+
+
+{% block head_title %}{% blocktrans %}WebID Client Certificate{% endblocktrans %}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block body %}
+
+{% if messages %}
+    <ul id="messages">
+        {% for message in messages %}
+        <li id="message_{{ forloop.counter }}">{{message}}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<div class="left_panel">
+
+    <h1>{% trans "WebID Certificate Generator" %}</h1>
+
+    {% include "django_webid/provider/webid_intro.html" %}
+    
+    <div class="form-toggle">
+        <form class="uniForm" method="POST" action="">
+	    {% csrf_token %}
+            <fieldset class="inlineLabels">
+                {{ form|as_uni_form }}
+                <div class="form_block">
+                    <input type="hidden" name="action" value="Download in PKCS#12 format" />
+                    <input type="submit" value="{% trans "Download in PKCS#12 format" %}" name="PKCS12"/>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_body %}
+{% endblock %}
+

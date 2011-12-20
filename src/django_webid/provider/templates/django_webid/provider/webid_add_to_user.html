@@ -1,0 +1,86 @@
+{% extends "django_webid/provider/base.html" %}
+
+{% load i18n %}
+{% load uni_form_tags %}
+
+
+{% block head_title %}{% blocktrans %}WebID Client Certificate{% endblocktrans %}{% endblock %}
+
+{% block extra_head %}
+<script type="text/javascript" src="{{ MEDIA_URL }}django_webid/provider/js/jquery-1.7.min.js"></script>
+<!--[if IE]>
+  <script type="text/javascript" src="{{ MEDIA_URL }}django_webid/provider/js/explorer-keygen.js"></script>
+<![endif]-->
+{% endblock %}
+
+{% block body %}
+
+{% if messages %}
+    <ul id="messages">
+        {% for message in messages %}
+        <li id="message_{{ forloop.counter }}">{{message}}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+
+<script type="text/javascript">
+
+	{% comment %}
+	we probably should disable button after 1st click
+	and in Chrome we should notify the user somehow
+	so she knows we're creating her cert...
+	it's silly, but nothing happens in the current Chrome...
+	{% endcomment %}
+	(function($) {
+	    $(document).ready(function($) {
+		    	{% comment %}
+			first "automated cert installation" attempt
+			var HIDE_KEYGEN_FORM should be passed from view (certconfig opt)
+			XXX should try with iframe also, this is a bit
+			buggy when page loads slowly.
+			{% endcomment %}
+			{% if HIDE_KEYGEN_FORM %}
+			$('#webid-block').hide();
+			$('#autowebidinstall').click( function(event) {
+				event.preventDefault();
+				$('#webid-keygen').click();
+				});
+			{% endif %}
+		        });
+			})($);
+</script>
+
+<div class="left_panel" id="webid-block">
+
+    <h1>{% trans "WebID Certificate Generator" %}</h1>
+
+    {#% include "django_webid/provider/webid_intro.html" %#}
+    
+    <div class="form-toggle">
+        <form class="uniForm" method="POST" action="">
+	    {% csrf_token %}
+            <fieldset class="inlineLabels">
+                <div class="form_block">
+                    <input type="hidden" name="action" value="keygen" />
+		    <keygen name="pubkey" challenge="{{ challenge }}">
+                    <input type="submit" value="{% trans "Give me a cert!" %}" name="keygen" id="webid-keygen"/>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+
+</div>
+
+{% if HIDE_KEYGEN_FORM %}
+<div>
+	<h2>Automatic WebID installation</h2>
+	<input type="submit" value="{% trans "Install my WebID in this browser" %}" id="autowebidinstall"/>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_body %}
+{% endblock %}
+

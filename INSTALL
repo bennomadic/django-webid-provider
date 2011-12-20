@@ -1,0 +1,50 @@
+In Debian/Ubuntu
+
+Install dependencies
+
+{{{
+}}}
+
+Install packages
+
+{{{
+sudo aptitude install python-m2crypto python-openssl python-django
+}}}
+{{{
+sudo pip install django-uni-form
+}}}
+
+or
+
+Download the application
+
+From git:
+{{{
+git clone https://github.com/bennomadic/django-webid-provider.git
+}}}
+From release tarball:
+{{{
+wget http://github.com/bennomadic/django-webid-provider/tarball/master)
+tar -xvzf django-webid-provider-0.1.tar.gz
+cd django-webid-provider-0.1
+}}}
+
+Create a virtualenv
+
+{{{
+virtualenv --no-site-packages django-webid-env
+}}}
+
+Install dependencies
+
+{{{
+source django-webid-env/bin/activate
+pip install -E django-webid-env -r examples/example_webid_provider/requirements/external_apps.txt
+}}}
+
+Modify settings (settings_local.py) according to your installation:
+{{{
+...
+}}}
+
+
