@@ -1,0 +1,6 @@
+django-webid-provider is a pluggable django app that allows the creation and management
+of `WebID`_ profiles, to be used in the `WebID`_ authentication protocol.
+
+It enables a webID URI per user, and allows the user to install the x509 Certificates that
+point to her webID profile.
+
