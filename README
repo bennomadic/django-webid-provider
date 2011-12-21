@@ -1,0 +1,5 @@
+Testing
+=======
+fab init
+fab test
+fab clean

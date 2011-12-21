@@ -5,6 +5,7 @@
 *.egg-info
 .*.swp
 .installed.cfg
+.PROD
 __minitage__*
 bin/*
 build/*

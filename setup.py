@@ -11,14 +11,20 @@ except ImportError:
     from setuptools import setup, find_packages
 import os
 
-from src.django_webid.provider import __version__
+execfile('./src/django_webid/provider/__init__.py')
 VERSION = __version__
 
 setup_root = os.path.dirname(__file__)
 sys.path.insert(0, os.path.join(setup_root, "src"))
 
 def read(*path):
-    return open(os.path.join(os.path.abspath(os.path.dirname(__file__)), *path)).read()
+    return open(os.path.join(os.path.abspath(setup_root), *path)).read()
+
+try:
+    long_description=read('docs', 'intro.txt'),
+except IOError:
+    #probably while installing in the venv from the tar.gz
+    long_description=""
 
 
 setup(
@@ -29,8 +35,9 @@ setup(
     packages=find_packages('src'),
     namespace_packages = ['django_webid'],
     version=VERSION,
-    description='Django app  intended to generate valid certificates for HTPP and XMPP WebID authentication',
-    long_description=read('docs', 'intro.txt'),
+    description='Django app for creating certs and profiles for WebID authentication.',
+    #long_description=read('docs', 'intro.txt'),
+    long_description=long_description,
     author='Ben Carrillo',
     author_email='bennomadic at gmail dot com',
     #

@@ -1,5 +1,13 @@
 import sys, os
 
+try:
+    execfile('bin/activate_this.py',
+                 dict(__file__='./bin/activate_this.py'))
+except IOError:
+    print("""ERROR: Looks like you do not have a virtualenv in the current dir.
+       No virtualenv, no tests, sorry :(""")
+    sys.exit(1)
+
 from django.conf import settings
 from django.conf.urls.defaults import patterns, include
 from django.core.management import call_command
@@ -7,6 +15,7 @@ from django.core.management import call_command
 setup_root = os.path.dirname(__file__)
 sys.path.insert(0, os.path.join(setup_root, "src"))
 sys.path.insert(0, os.path.join(setup_root, "examples"))
+
 
 
 def main():

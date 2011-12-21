@@ -33,6 +33,10 @@ Create a virtualenv
 
 {{{
 virtualenv --no-site-packages django-webid-env
+
+OR:
+
+fab init
 }}}
 
 Install dependencies
