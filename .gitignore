@@ -1,7 +1,8 @@
 *~
 *.orig
-*.pyc
+*.py[co]
 *.rej
+.*.swp
 .installed.cfg
 __minitage__*
 bin/*
