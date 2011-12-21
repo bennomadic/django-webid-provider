@@ -114,7 +114,8 @@ class CertCreator(object):
         # maybe linked to session or something???
 
         spkac_str = re.sub('\s', '', spkac_str)
-        print('SPKAC PUBKEY=%s' % spkac_str)
+        #print('SPKAC PUBKEY=%s' % spkac_str)
+        logging.debug('SPKAC PUBKEY=%s' % spkac_str)
 
         if "BEGINIECERTIFICATEREQUEST" in spkac_str:
             #XXX improve csr type detection (get a flag from view)
@@ -453,7 +454,7 @@ def gen_keypair(bits=1024):
     pkey = EVP.PKey()
     rsa = RSA.gen_key(bits, 65537)
     pkey.assign_rsa(rsa)
-    print "Generated private RSA key"
+    #print "Generated private RSA key"
     # Print the new key as a PEM-encoded (but unencrypted) string
     logging.debug(rsa.as_pem(cipher=None))
     return pkey
@@ -576,7 +577,7 @@ def gen_httpwebid_selfsigned_cert(webid, serial_number=0, years=1, nick=None):
     cert, pkey = sign_cert(pkey, cert)
 
     # Print the new certificate as a PEM-encoded string
-    print "Generated new self-signed client certificate"
+    #print "Generated new self-signed client certificate"
     logging.debug(cert.as_pem())
 
     return cert, pkey

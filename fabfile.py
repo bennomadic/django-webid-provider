@@ -45,8 +45,7 @@ def deploy():
             run("git clone %s %s" % (repo, code_dir))
     with cd(code_dir):
         run("git pull origin master")
-        #XXX touch the wsgi file in the example deploy
-        #run("touch app.wsgi")
+        run("~/webid_scripts/webid_reset_wsgi.sh")
 
 ###############################################
 # to check (copied from somewhere, not working
