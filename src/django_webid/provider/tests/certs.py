@@ -14,7 +14,7 @@ TEST_MSIE_PKCS10=''
 TEST_ISSUER_PKEY = '-----BEGIN PRIVATE KEY-----\nMIICeQIBADANBgkqhkiG9w0BAQEFAASCAmMwggJfAgEAAoGBAMIScjmDtte3FSXy\nB54nlNij65OK/tgR5UIKHY311sVa+a3P1Tkh8r+kOPzbLcUewRXl5IB74l8t4NhA\n6t2aL1oLpDZpFvXkUsNEdhNbgJ5Wjz/gwAxJ3Hyx0MwJZzbWrt0sjJLSpL0ClZe1\ncQXOu41wfA4VZCd0s18weSziyGHbAgMBAAECgYEAu6n0tHMOgsfydk/1V9T0lQzl\nhzXYOv4LD/ISJC0+cncHizC3Adk3EGPwC2qydrPHiLJWZHvnKZyGmPclZgZrk9ng\nYIZ/ZpT1/DTyUk3LeF+rgsOIkDIgNSijuH9kXNXN8r92eiqXkwHk4LMPZ3wV0OxV\nEO+SISj8ps5GgQuVvwECQQDw3AaPyeqNwaaiIEWzFe35PQnM2OwaCVjE27XDNxMl\n9GxLmLaCUMb17+glLjrbAN2ENhlTjYmaC+n81vd5HwNbAkEAzkWBSYRAuk5Cn2BF\n3flvSVJYyiWeejEUWooXGQjDxy1VEZFlv3hIVnNh8ob2YzyJB4ELwH0mMX9oATPL\nK+rjgQJBAMo4AK5SWUIg9vUhYUNlQwJBs+uvqDKH7GaDDIzUvZfdKdsiYQDyLskn\nXeFxeeqLRHAPN55Fs+SI4i/sj6O6XQcCQQCWM1KDoAQqJdapi0cU7g81SvtQp7gQ\nrjBuBWPwXMuC++WYF1IJ7KJwITDPk6tSc8AscLGIBxmKrYWkanyljDMBAkEAgc/t\ny6BXB9+2q37HfioRe7dV8/UlifNSli3JOU38UKiBuXaZ43cGzDkPqJM01B0FSosO\nUdqV9yLYuit5BUAKEQ==\n-----END PRIVATE KEY-----\n'
 
 class WebIDCertsTestCase(unittest.TestCase):
-    urls = 'django_webid.provider.urls'
+    #urls = 'django_webid.provider.urls'
     def setUp(self):
         self.user = User.objects.create_user("test",
                 'test@example.com', 'testpw')

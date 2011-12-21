@@ -21,15 +21,6 @@ class CertConfig(models.Model):
     This model behaves as a singleton: its admin
     does not allow adding or deleting the single instance.
     """
-    #currently using a hack: see Admin no-add/no-edit restriction
-    #we can decide whether it makes sense having a per-site config section
-    #or not...
-
-    objects = SingletonManager()
-
-    class Meta:
-        verbose_name = "Default Certificate Values"
-        verbose_name_plural = "Default Certificate Values"
 
     #Defaults for App Behavior
     hide_keygen_form = models.BooleanField(default=False,
@@ -98,6 +89,17 @@ class CertConfig(models.Model):
                  "from_days": self.valid_from_days}
         return data
 
+    #currently using a hack: see Admin no-add/no-edit restriction
+    #we can decide whether it makes sense having a per-site config section
+    #or not...
+
+    objects = SingletonManager()
+
+    class Meta:
+        verbose_name = "Default Certificate Values"
+        verbose_name_plural = "Default Certificate Values"
+        db_table = "webid_provider_certconfig"
+
     def __unicode__(self):
         return "Default Configuration for WebID Certificates"
 
@@ -105,10 +107,6 @@ class CertConfig(models.Model):
 class PubKey(models.Model):
     #XXX in admin, should use inline
     #for viewing the cert at the same time.
-
-    class Meta:
-        verbose_name = "Public Key"
-        verbose_name_plural = "Public Keys"
 
     mod  = models.CharField(max_length=10000)
     exp  = models.IntegerField()
@@ -137,12 +135,13 @@ class PubKey(models.Model):
                 self.date_created,
                 self.cert.fingerprint_sha1)
 
+    class Meta:
+        verbose_name = "Public Key"
+        verbose_name_plural = "Public Keys"
+        db_table = "webid_provider_pubkey"
+
 
 class Cert(models.Model):
-
-    class Meta:
-        verbose_name = "x509 Certificate"
-        verbose_name_plural = "x509 Certificates"
 
     pubkey = models.OneToOneField(PubKey)
 
@@ -164,6 +163,12 @@ class Cert(models.Model):
     #in which browser was installed...
 
     #Format (pkcs10, 12, 7...)
+
+    class Meta:
+        verbose_name = "x509 Certificate"
+        verbose_name_plural = "x509 Certificates"
+        #app_label = "django_webid_provider"
+        db_table = "webid_provider_cert"
 
     def __unicode__(self):
         return "%s's cert with Fingerprint %s" % (
@@ -251,6 +256,7 @@ class WebIDProfile(models.Model):
 
     class Meta:
         abstract = True
+        #app_label = "django_webid_provider"
 
 
 class WebIDBasicProfile(WebIDProfile):
@@ -260,3 +266,6 @@ class WebIDBasicProfile(WebIDProfile):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
 
+    class Meta:
+        #app_label = "django_webid_provider"
+        db_table = "webid_provider_webidbasicprofile"
