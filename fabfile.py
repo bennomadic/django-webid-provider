@@ -45,7 +45,10 @@ def deploy():
             run("git clone %s %s" % (repo, code_dir))
     with cd(code_dir):
         run("git pull origin master")
+        run("~/webid_scripts/webid_build.sh")
         run("~/webid_scripts/webid_reset_wsgi.sh")
+    print("")
+    print(green("[OK] Code has been deployed"))
 
 ###############################################
 # to check (copied from somewhere, not working
