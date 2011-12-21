@@ -20,11 +20,7 @@ sys.path.insert(0, os.path.join(setup_root, "src"))
 def read(*path):
     return open(os.path.join(os.path.abspath(setup_root), *path)).read()
 
-try:
-    long_description=read('docs', 'intro.txt'),
-except IOError:
-    #probably while installing in the venv from the tar.gz
-    long_description=""
+long_description="..."
 
 
 setup(
