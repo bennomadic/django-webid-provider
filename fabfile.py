@@ -23,6 +23,14 @@ def init():
     local("python setup.py sdist")
     local("pip install -E . dist/django_webid.provider-0.1.tar.gz")
 
+def rebuild():
+    """
+    re-builds the package
+    """
+    local("rm -rf dist/")
+    local("python setup.py sdist")
+    local("pip install -E . dist/django_webid.provider-0.1.tar.gz")
+
 def clean():
     """
     Remove the cruft created by virtualenv and pip
