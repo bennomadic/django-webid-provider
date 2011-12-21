@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import sys
+
 try:
     from setuptools import setup, find_packages
 except ImportError:
@@ -9,14 +11,22 @@ except ImportError:
     from setuptools import setup, find_packages
 import os
 
-VERSION = __import__('django_webid.provider').__version__
+from src.django_webid.provider import __version__
+VERSION = __version__
+
+setup_root = os.path.dirname(__file__)
+sys.path.insert(0, os.path.join(setup_root, "src"))
 
 def read(*path):
     return open(os.path.join(os.path.abspath(os.path.dirname(__file__)), *path)).read()
 
+
 setup(
     #XXX ???
     name='django_webid.provider',
+    #packages=['django_webid.provider'],
+    package_dir = {'':'src'},
+    packages=find_packages('src'),
     namespace_packages = ['django_webid'],
     version=VERSION,
     description='Django app  intended to generate valid certificates for HTPP and XMPP WebID authentication',
@@ -26,7 +36,6 @@ setup(
     #
     download_url='https://github.com/bennomadic/django-webid-provider.git',
     #url=...
-    packages=find_packages(),
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
