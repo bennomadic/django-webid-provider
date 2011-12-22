@@ -18,7 +18,7 @@ def init():
     Initialize a virtualenv in which to run tests against this
     """
     local("virtualenv .")
-    local("pip install -E . -r examples/example_webid_provider/requirements/libs.txt")
+    #local("pip install -E . -r examples/example_webid_provider/requirements/libs.txt")
     local("pip install -E . -r examples/example_webid_provider/requirements/external_apps.txt")
     local("python setup.py sdist")
     local("pip install -E . dist/django_webid.provider-0.1.tar.gz")

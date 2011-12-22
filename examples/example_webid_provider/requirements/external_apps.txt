@@ -2,4 +2,5 @@
 M2Crypto>=0.20.2
 pyOpenSSL>=0.10
 django-uni-form>=0.7.0
+django-defaultsite==1.1
 #django-staticfiles==0.1.2
