@@ -3,12 +3,28 @@ from django import template
 register = template.Library()
 
 #XXX this can be made smarter, but...
-PUBKEY_SNIPPET = u"""
+DEPRECATED_PUBKEY_SNIPPET = u"""
 <div about="#cert" typeof="rsa:RSAPublicKey">
   <div href="%(uri)s" rel="cert:identity"></div>
   <div property="rsa:modulus" datatype="cert:hex" content="%(mod)s">%(pretty_mod)s</div>
   <div property="rsa:public_exponent" datatype="cert:int" content="%(exp)s">%(exp)s</div>
   <div about="%(uri)s"></div>
+</div>
+"""
+
+#XXX :( I was liking the %(pretty_mod)s...
+
+PUBKEY_SNIPPET = u"""
+<div rel="cert:key">
+    <p>One of my Public Keys... made on...</p>
+    <div typeof="cert:RSAPublicKey">
+      <dl>
+      <dt>Modulus (hexadecimal)</dt>
+      <dd style="word-wrap: break-word; white-space: pre-wrap;"
+         property="cert:modulus" datatype="xsd:hexBinary">%(mod)s</dd>
+      <dt>Exponent (decimal)</dt>
+      <dd property="cert:exponent" datatype="xsd:integer">%(exp)s</dd>
+      </dl>
 </div>
 """
 
@@ -30,7 +46,7 @@ def do_pubkey_rdf(parser, token):
     if not (_format[0] == _format[-1] and _format[0] in ('"', "'")):
         raise template.TemplateSyntaxError("%r tag's argument should be in quotes" % tag_name)
     return_format = _format[1:-1]
-    if not return_format in ('rdfa', 'rdfxml'):
+    if not return_format in ('rdfa', 'rdfxml', 'turtle'):
         raise template.TemplateSyntaxError("%r tag format argument should be one of the following: 'rdfa', 'rdfxml'" % tag_name)
     return PubKeyRDFNode(return_format, user_var)
 
@@ -52,7 +68,9 @@ class PubKeyRDFNode(template.Node):
                         }
                 return r
             if self._format == "rdfxml":
-                return 'NOT IMPLEMENTED'
+                return 'FORMAT NOT IMPLEMENTED'
+            if self._format == "turtle":
+                return 'FORMAT NOT IMPLEMENTED'
             #XXX FIXME return TURTLE!!!
             raise template.TemplateSyntaxError("format should be one of the following: 'rdfa', 'rdfxml'")
         except template.VariableDoesNotExist:

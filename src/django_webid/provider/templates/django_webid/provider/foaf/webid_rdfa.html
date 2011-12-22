@@ -11,18 +11,17 @@
 <title>webid for {{ webiduser.username }}</title>
 <link rel="openid.server" href="http://openid4.me/index.php" />
 <link rel="openid2.provider" href="http://openid4.me/index.php"/>
-
 {# CAN WE LINK SOMEHOW TO THE RDF+XML VERSION??? #}
-
+{# sure... link-rel #}
+{# but we should have here some content-negociation in place :) #}
 </head>
 <body typeof="foaf:PersonalProfileDocument" about="#">
-<p>WebID for: {{ webiduser.username }}</p>
-
-{# PUT NICK AND NAMES #}
-
-<div rel="foaf:primaryTopic" href="http://calamar.net/foaf/calamar.foaf"/>
-
-{% pubkey_rdf "rdfa" webiduser %}
-
+<!-- WebID HTML snippet. The xmlns declarations above can be moved into the div below if needed-->
+<div about="#me" typeof="foaf:Person">
+  <span property="foaf:name">{{ webiduser.username }}</span>
+  <h2>My RSA Public Keys</h2>
+  {% pubkey_rdf "rdfa" webiduser %}
+</div>
+<!-- WebID HTML snippet -->
 </body>
 </html>
