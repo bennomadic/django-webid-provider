@@ -18,12 +18,12 @@
     views
     ~~~~~~~~
 
-    :authors:       Julia Anaya, Benjamin Carrillo
+    :authors:       Ben Carrillo, Julia Anaya
     :organization:  rhizomatik labs
     :copyright:     author
     :license:       GNU GPL version 3 or any later version
                     (details at http://www.gnu.org)
-    :contact:       julia dot anaya at gmail dot com
+    :contact:       bennomadic at gmail dot com
     :dependencies:  python (>= version 2.6)
     :change log:
     :TODO:
@@ -107,8 +107,9 @@ def create_user(request):
             if not errors:
                 u = form.save()
 
-                print 'created user... %s' % u
-                print 'active? %s' % u.is_active
+                if settings.DEBUG:
+                    logging.debug('created user... %s' % u)
+                    logging.debug('active? %s' % u.is_active)
 
                 u.backend = 'django.contrib.auth.backends.ModelBackend'
                 auth_login(request, u)
@@ -225,8 +226,9 @@ def webid_identity_keygen(request):
 
                 #XXX REFACTOR ##############################
                 pubkey = re.sub('\s', '', str(request.POST['pubkey']))
-                logging.debug('PUBKEY=%s' % pubkey)
-                print('PUBKEY=%s' % pubkey)
+                if settings.DEBUG:
+                    logging.debug('PUBKEY=%s' % pubkey)
+                    #print('PUBKEY=%s' % pubkey)
                 spki = crypto.NetscapeSPKI(pubkey)
                 cert = crypto.X509()
                 cert.get_subject().C = "US"
