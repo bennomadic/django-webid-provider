@@ -49,15 +49,16 @@ class WebIDCertsTestCase(unittest.TestCase):
         self.assertEqual(extension.get_critical(), 1L)
         #XXX this should also get the WebIDUser
         #method for getting the absolute URI
-        self.assertEqual(extension.get_data(), '0%\x86#http://example.com/webid/foaf/test/')
+        #IT Needs the defaultsite app for working.
+        self.assertEqual(extension.get_data(),  '0%\x86#http://foafgen.net/webid/foaf/test/')
         self.assertEqual(cert.get_notBefore(), '20120101120000Z')
         self.assertEqual(cert.get_notAfter(), '20121231120000Z')
 
         db_cert = Cert.objects.get(id=1)
         self.assertEqual(db_cert.fingerprint_sha1,
-            '2c:cd:37:cc:7b:75:ae:4e:be:81:f9:a0:ba:85:3b:74:3f:1b:84:02')
+                'e2:4c:9d:4a:63:a3:dd:21:2f:80:85:8b:10:5e:46:3a:ec:63:dc:49')
         self.assertEqual(db_cert.fingerprint_md5,
-            '48:ec:3b:6a:92:e8:bb:dd:33:38:b2:7c:7a:6a:29:b3')
+                '43:83:0e:3e:a8:59:e3:42:67:5d:3d:81:9b:1b:4c:bf')
         #print crypto.dump_certificate(crypto.FILETYPE_PEM, cert)
 
         #Check associated PubKey

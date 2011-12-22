@@ -29,11 +29,15 @@ def main():
             'django.contrib.sites',
             'django.contrib.staticfiles',
             'uni_form',
+            'defaultsite',
             'django_webid.provider',
         ),
         # Django replaces this, but it still wants it. *shrugs*
         DATABASE_ENGINE='sqlite3',
         SITE_ID=1,
+        SITE_DOMAIN = 'foafgen.net',
+        SITE_NAME = 'foafgen',
+
         AUTH_PROFILE_MODULE = 'django_webid.provider.WebIDBasicProfile',
         ROOT_URLCONF = 'example_webid_provider.urls',
 
