@@ -376,13 +376,11 @@ def init_blank_profile_for_new_user(sender, **kwargs):
     in the moment of its creation.
     """
     if kwargs.get('created', None):
-        #print "signaled! user saved and created!"
         user = kwargs.get('instance')
         webiduser = WebIDUser.objects.get(id=user.id)
 
         profile_model = settings.AUTH_PROFILE_MODULE
         app_split = profile_model.split('.')
-        print app_split
         if len(app_split) == 2:
             app_label, mod_label = app_split
         else:
