@@ -381,7 +381,12 @@ def init_blank_profile_for_new_user(sender, **kwargs):
         webiduser = WebIDUser.objects.get(id=user.id)
 
         profile_model = settings.AUTH_PROFILE_MODULE
-        app_label, mod_label = profile_model.split('.')
+        app_split = profile_model.split('.')
+        print app_split
+        if len(app_split) == 2:
+            app_label, mod_label = app_split
+        else:
+            app_label, mod_label = app_split[-2:]
         pklss = models.get_model(app_label, mod_label)
 
         pklss.objects.create(user=webiduser)
