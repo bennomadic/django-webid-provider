@@ -14,7 +14,7 @@ DEPRECATED_PUBKEY_SNIPPET = u"""
 
 #XXX :( I was liking the %(pretty_mod)s...
 
-PUBKEY_SNIPPET = u"""
+PUBKEY_SNIPPET_RDFA = u"""
 <div rel="cert:key">
     <p>One of my Public Keys... made on...</p>
     <div typeof="cert:RSAPublicKey">
@@ -26,6 +26,15 @@ PUBKEY_SNIPPET = u"""
       <dd property="cert:exponent" datatype="xsd:integer">%(exp)s</dd>
       </dl>
 </div>
+"""
+
+PUBKEY_SNIPPET_TURTLE = u"""
+  :key [ a :RSAPublicKey;
+    rdfs:label "key made on [...] on my laptop";
+    :modulus
+   "%(mod)s"^^xsd:hexBinary;
+    :exponent %(exp)s ;
+  ] .
 """
 
 PADDING_CHR = u'\u271c'
@@ -57,21 +66,26 @@ class PubKeyRDFNode(template.Node):
         self.user_var = template.Variable(user_var)
     def render(self, context):
         try:
+            #XXX REFACTOR
+            uu = self.user_var.resolve(context)
             if self._format == "rdfa":
-                uu = self.user_var.resolve(context)
                 r = ""
                 for pk in uu.keys:
-                    r = r + PUBKEY_SNIPPET % {'mod':pk.mod,
+                    r = r + PUBKEY_SNIPPET_RDFA % {'mod':pk.mod,
                         'pretty_mod': prettyfy(pk.mod),
                         'exp':pk.exp,
                         'uri': uu.absolute_webid_uri,
                         }
                 return r
+            if self._format == "turtle":
+                r = ""
+                for pk in uu.keys:
+                    r = r + PUBKEY_SNIPPET_TURTLE % {'mod':pk.mod,
+                        'exp':pk.exp,
+                        }
+                return r
             if self._format == "rdfxml":
                 return 'FORMAT NOT IMPLEMENTED'
-            if self._format == "turtle":
-                return 'FORMAT NOT IMPLEMENTED'
-            #XXX FIXME return TURTLE!!!
             raise template.TemplateSyntaxError("format should be one of the following: 'rdfa', 'rdfxml'")
         except template.VariableDoesNotExist:
             return ''

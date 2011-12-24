@@ -1,0 +1,10 @@
+{% load pubkey %}@prefix : <http://www.w3.org/ns/auth/cert#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix bob: <https://bob.example/profile#> .
+@prefix rdfs: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+{{ webiduser.username }}:me a foaf:Person;
+  foaf:name "{{ webiduser.username }}";
+  {% pubkey_rdf "turtle" webiduser %}
+

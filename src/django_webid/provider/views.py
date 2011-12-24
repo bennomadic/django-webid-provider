@@ -54,7 +54,10 @@ from OpenSSL import crypto
 from .models import WebIDUser, CertConfig
 #from .certs.utils import create_cert # deprecated
 from .certs.utils import CertCreator
+
+
 #XXX PKCS12 SHIT
+#... that we could shut down by the moment...
 from .certs.utils import gen_httpwebid_selfsigned_cert_pemfile, pemfile_2_pkcs12file
 
 from .forms import WebIdIdentityForm
@@ -114,7 +117,7 @@ def create_user(request):
                 u.backend = 'django.contrib.auth.backends.ModelBackend'
                 auth_login(request, u)
 
-                return redirect('add_cert_to_user')
+                return redirect('webidprovider-add_cert')
 
 
             return render_to_response('django_webid/provider/create_user.html', {
@@ -138,13 +141,15 @@ def create_user(request):
 
 
 #####################
-# ADD CERT
+# CERT:ADD
 #####################
 
 @login_required
 #XXX doubt... will this decorator work also for webid-auth?
 #if not logged in, it should check if anon register is allowed
 #and redirect there...
+#XXX but now it's redirecting to the accounts url that is not
+#being loaded...
 def add_cert_to_user(request):
     messages = []
     if request.method == 'POST':
@@ -193,9 +198,38 @@ def add_cert_to_user(request):
 
 
 ###########################################
+# WEBID VIEWS                             #
+###########################################
+
+def render_webid(request, username=None):
+    uu = get_object_or_404(WebIDUser,
+            username=username)
+    return render_to_response('django_webid/provider/foaf/webid_rdfa.html',
+             {
+             "webiduser": uu,
+             "MEDIA_URL": settings.MEDIA_URL,
+             "STATIC_URL": settings.STATIC_URL,
+             })
+             #, context_instance=RequestContext(request))
+
+
+###########################################
+# CERTS VIEWS                             #
+###########################################
+# functions for add / display / remove (remove
+# should maybe mark a cert as non active??)
+# we could change the manager... objects = filter(active=True)
+# and leave the old manager as a legacy manager objects_all
+
+
+
+
+###################################################
+###########################################
 # OLD VIEWS THAT WE CAN KEEP BUT NEED TO BE
 # REFACTORED TO USE NEW FUNCTIONS
 ###########################################
+###################################################
 
 
 def webid_identity_keygen(request):
@@ -340,29 +374,6 @@ def webid_identity(request):
     }, context_instance=RequestContext(request))
 
 
-###########################################
-# WEBID VIEWS                             #
-###########################################
-
-def render_webid(request, username=None):
-    uu = get_object_or_404(WebIDUser,
-            username=username)
-    return render_to_response('django_webid/provider/foaf/webid_rdfa.html',
-             {
-             "webiduser": uu,
-             "MEDIA_URL": settings.MEDIA_URL,
-             "STATIC_URL": settings.STATIC_URL,
-             })
-             #, context_instance=RequestContext(request))
-
-
-###########################################
-# CERTS VIEWS                             #
-###########################################
-# functions for add / display / remove (remove
-# should maybe mark a cert as non active??)
-# we could change the manager... objects = filter(active=True)
-# and leave the old manager as a legacy manager objects_all
 
 
 

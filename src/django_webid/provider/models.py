@@ -191,12 +191,12 @@ class WebIDUser(User):
         return WebIDUser.objects.get(id=user.id)
 
     def _get_webid_url(self):
-        #XXX
+        #XXX FIXME
         #if it is hosted (see checking profile)
         #return reverse url
         #XXX in the future, we can use any other
         #user field. Use contenttypes in CertConfig.
-        return reverse('webid_uri',
+        return reverse('webidprovider-webid_uri',
                 kwargs={'username': self.username})
 
     webid_url = property(_get_webid_url)
@@ -212,10 +212,10 @@ class WebIDUser(User):
         #webid.auth module does not.
 
         #XXX document that we NEED TO HAVE SITES APP WORKING.
-        #There's an small app that enforces writing site from
-        #setting when syncdb.
+        #XXX Putting here the "me"
+        #XXX get a setting for this?
 
-        uri = "http://%s%s" % (
+        uri = "http://%s%s#me" % (
                 Site.objects.get_current().domain,
                 self._get_webid_url())
         return uri

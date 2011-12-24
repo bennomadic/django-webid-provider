@@ -3,4 +3,15 @@ M2Crypto>=0.20.2
 pyOpenSSL>=0.10
 django-uni-form>=0.7.0
 django-defaultsite==1.1
+
+# git repos
+# FIXME put upstream when oucs merges fixes
+# and point to pypi when fixed
+-e git://github.com/bennomadic/django-conneg.git#egg=django_conneg
+ 
+
+
+ 
+
+
 #django-staticfiles==0.1.2

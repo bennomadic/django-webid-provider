@@ -1,36 +1,38 @@
 from django.conf.urls.defaults import *
+from django.views.generic.simple import redirect_to
+from django_webid.provider import views, webiduri
 
 urlpatterns = patterns('',
     #Main, WORKING urls
 
-    url(r'^addcert$',
-        'django_webid.provider.views.add_cert_to_user',
-        name="add_cert_to_user"),
-    url(r'^create$',
-        'django_webid.provider.views.create_user',
-        name='create_user'),
-    url(r'^$',
-        'django_webid.provider.views.add_cert_to_user',
-        name="add_cert_to_user1"),
+    #temporary REDIRECT
+    #XXX we need a info page here
+    url(r'^$', redirect_to, {'url':'cert/add'}),
 
-    #Foaf publishing...
+    url(r'^cert/add$', views.add_cert_to_user, name="webidprovider-add_cert"),
+    url(r'^user/add$', views.create_user, name='webidprovider-create_user'),
+
+    #WebID Profile / Foaf publishing...
     #XXX can we do some magic here? (asking settings, finstance)
+    #XXX should be "%s/foo" % settings.WEBID_PATH
+    #XXX We MUST allow for other app to take control of this
+    #XXX but at the same time provide a fallback mechanism...
 
-    url(r'^foaf/(?P<username>\w+)/$',
-        #XXX should be "%s/foo" % settings.WEBID_PATH
-        #with a sensible default...
-        'django_webid.provider.views.render_webid',
-        name="webid_uri"),
+    url(r'^(?P<username>\w+)$', views.render_webid, name="webidprovider-webid_uri"),
+
+    #XXX testing the content-negotiated view...
+    #XXX experimental...
+    url(r'^c/(?P<username>\w+)$',
+        webiduri.WebIDProfileView.as_view(), name="webidprovider-webid_uri"),
 
     ################################################
     ################################################
     # Other tests: to be cleaned from here...
     # Might be BROKEN
 
-    url(r'^createp12$', 'django_webid.provider.views.webid_identity',
-        name='webid_identity1'),
-    url(r'^webidkeygen$',
-        'django_webid.provider.views.webid_identity_keygen',
-        name='webid_identity_keygen'),
+    url(r'^cert/p12/add$', views.webid_identity,
+        name='webidprovider-webid_identity1'),
+    url(r'^cert/keygen$', views.webid_identity_keygen,
+        name='webidprovider-webid_identity_keygen'),
 
 )

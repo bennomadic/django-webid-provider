@@ -1,0 +1,27 @@
+{% load pubkey %}<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML+RDFa 1.0//EN" "http://www.w3.org/MarkUp/DTD/xhtml-rdfa-1.dtd">
+<html
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cert="http://www.w3.org/ns/auth/cert#"
+      xmlns:foaf="http://xmlns.com/foaf/0.1/"
+      xmlns:owl="http://www.w3.org/2002/07/owl#"
+      xmlns:rsa="http://www.w3.org/ns/auth/rsa#"
+      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+<head>
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8" />
+<title>webid for {{ webiduser.username }}</title>
+<link rel="openid.server" href="http://openid4.me/index.php" />
+<link rel="openid2.provider" href="http://openid4.me/index.php"/>
+{# CAN WE LINK SOMEHOW TO THE RDF+XML VERSION??? #}
+{# sure... link-rel #}
+{# but we should have here some content-negociation in place :) #}
+</head>
+<body typeof="foaf:PersonalProfileDocument" about="#">
+<!-- WebID HTML snippet. The xmlns declarations above can be moved into the div below if needed-->
+<div about="#me" typeof="foaf:Person">
+  <span property="foaf:name">{{ webiduser.username }}</span>
+  <h2>My RSA Public Keys</h2>
+  {% pubkey_rdf "rdfa" webiduser %}
+</div>
+<!-- WebID HTML snippet -->
+</body>
+</html>
