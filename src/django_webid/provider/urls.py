@@ -18,11 +18,7 @@ urlpatterns = patterns('',
     #XXX We MUST allow for other app to take control of this
     #XXX but at the same time provide a fallback mechanism...
 
-    url(r'^(?P<username>\w+)$', views.render_webid, name="webidprovider-webid_uri"),
-
-    #XXX testing the content-negotiated view...
-    #XXX experimental...
-    url(r'^c/(?P<username>\w+)$',
+    url(r'^(?P<username>\w+)$',
         webiduri.WebIDProfileView.as_view(), name="webidprovider-webid_uri"),
 
     ################################################

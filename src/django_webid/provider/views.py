@@ -200,6 +200,8 @@ def add_cert_to_user(request):
 ###########################################
 # WEBID VIEWS                             #
 ###########################################
+# Deprecated by the content-negotiated view
+# in webiduri
 
 def render_webid(request, username=None):
     uu = get_object_or_404(WebIDUser,

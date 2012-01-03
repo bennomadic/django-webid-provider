@@ -29,7 +29,7 @@ def rebuild():
     """
     local("rm -rf dist/")
     local("python setup.py sdist")
-    local("pip install -E . dist/django_webid.provider-0.1.tar.gz")
+    local("pip install -E . -I -U dist/django_webid.provider-0.1.tar.gz")
 
 def clean():
     """
