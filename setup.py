@@ -20,16 +20,21 @@ sys.path.insert(0, os.path.join(setup_root, "src"))
 def read(*path):
     return open(os.path.join(os.path.abspath(setup_root), *path)).read()
 
+#XXX FIXME description!
 long_description="..."
 
 
+packages=find_packages('src')
+print 'packages', packages
 setup(
-    #XXX ???
     name='django_webid.provider',
-    #packages=['django_webid.provider'],
     package_dir = {'':'src'},
-    packages=find_packages('src'),
+    packages=packages,
     namespace_packages = ['django_webid'],
+    include_package_data=True,
+    exclude_package_data={
+        'requirements': ['%s/*.tar.gz' % VERSION],
+    },
     version=VERSION,
     description='Django app for creating certs and profiles for WebID authentication.',
     #long_description=read('docs', 'intro.txt'),
@@ -52,11 +57,6 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
     keywords='foaf, ssl, webid, x509, certificate, client certificate, authentication, authorization,django',
-    include_package_data=True,
     zip_safe=False,
-    exclude_package_data={
-        'requirements': ['%s/*.tar.gz' % VERSION],
-    },
-
 )
 
