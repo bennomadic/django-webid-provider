@@ -1,0 +1,48 @@
+{% extends "django_webid/provider/base.html" %}
+{% load i18n %}
+{% load uni_form_tags %}
+
+{% block head_title %}{% blocktrans %}WebID{% endblocktrans %}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+{% block tabhead %}
+{% endblock %}
+
+
+{% block body %}
+<div id="home-header">
+	<!-- HEADER title -->
+	<div class="header-title">
+	  <div id="home-logo"></div>
+	  <h1>WebID Provider</h1>
+	  <p class="tagline">Your Identity. Your data. Your rules.</p>
+        </div>
+        <!-- END HEADER title -->
+        <!-- HEADER buttons -->
+        <div class="home-header-buttons">
+	  {# XXX reverse url here #}
+	  <a class="reg" href="/webid/user/add">Create WebID<a>
+	  <div class="log-box">
+		<p>or <a class="login" href="/accounts/login/">Log in</a></p>
+	  </div>
+	</div>
+</div>
+<div id="home-content">
+	<div class="left">
+		<h2>What is this?</h2>
+		<p>This site is a demo of <b>django-webid-provider</b>, a reusable django app that turns any django-powered site into a <a href='http://www.w3.org/wiki/WebID'>WebID</a> provider.</p>
+		<p>You'll also probably want to use the companion authentication package <b>django-webid-auth</b>, and <b>django-webid-profile</b> for semantic-ready user profiles (<em>coming soon! ...</em>)
+		<h3>For developers</h3>
+		<p>Fork code <a href="http://github.com/bennomadic/django-webid-provider">on github</a>. Have a look at the current <a href='http://www.w3.org/2005/Incubator/webid/spec/'>spec.</a></p>
+	</div>
+	<div class="right">
+		{#<h2>Your WebID</h2><p>Get yours!...</p>#}
+		<div id="semantic-machine"></div>
+	</div>
+</div>
+{% endblock %}
+
+{% block extra_body %}
+{% endblock %}
+
