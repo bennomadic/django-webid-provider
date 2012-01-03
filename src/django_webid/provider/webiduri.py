@@ -14,7 +14,7 @@ from django_webid.provider.models import WebIDUser
 
 class PriorityContentNegotiatedView(ContentNegotiatedView):
     """
-    experimenting with dynamic addition
+    dynamic addition
     of renderers
     """
 
@@ -69,8 +69,8 @@ class WebIDProfileView(PriorityContentNegotiatedView):
     #_force_fallback_format = 'html'
     _mimetypes = (('text/html', 10, 'html'),
                   ('application/xhtml+xml', 5, 'rdfa'),
-                  ('application/rdf+xml', 5, 'rdfxml'),
-                  ('text/turtle', 1, 'turtle'))
+                  ('application/rdf+xml', 1, 'rdfxml'),
+                  ('text/turtle', 2, 'turtle'))
 
     def get(self, request, username=None):
         uu = get_object_or_404(WebIDUser,
@@ -84,3 +84,9 @@ class WebIDProfileView(PriorityContentNegotiatedView):
         return self.render(request, context,
                 'django_webid/provider/webidprofile/webid')
 
+    # fix head method
+    # (fixed in bennomadic fork of django_conneg, which is now
+    # in requirements, let's see if it's merged upstream.)
+
+    #def head(self, request, *args, **kwargs):
+    #    return self.get(request, *args, **kwargs)

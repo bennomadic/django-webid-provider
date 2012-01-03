@@ -25,6 +25,7 @@ PUBKEY_SNIPPET_RDFA = u"""
       <dt>Exponent (decimal)</dt>
       <dd property="cert:exponent" datatype="xsd:integer">%(exp)s</dd>
       </dl>
+    </div>
 </div>
 """
 
