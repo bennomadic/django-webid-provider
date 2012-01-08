@@ -69,68 +69,107 @@ ul#messages li a {
 /*    color: #693;*/
 color: #6da52b;
 }
+
 /******************************************************************************/
 /* forms */
 /******************************************************************************/
+
 input[type="text"], input[type="password"], textarea {
-/*    padding: 3px;*/
     margin: 3px;
-/*    border: solid 1px #C6C6C6;*/
-/*    border-bottom: solid 1px #E3E3E3;*/
     color: #666;
-/*    font-size: 12pt;*/
-/*    background: #F3F3F3 url('/site_media/pinax/images/form-shadow.png') left top repeat-x;*/
-/*    font-weight: bold;*/
     border: 1px solid #d1d1d1;
     padding: 2px 3px;
 }
-input[type="submit"] {
-    border: solid 1px #ff5f10;
-    cursor: pointer;
-    color: white;
-    font-size: 12px;
-    background: #e29311;
-    padding-top: 1px;
-    padding-bottom: 1px;
-}/* form toggle */
 
-.form-toggle {
-padding-bottom: 10px;
-/*border-bottom: 1px solid #e29311;*/
-width: 97%;
+
+input[type="submit"], input[type="button"],
+button, .button {
+  color: #666;
+  font-weight: bold;
+  font-family: "ff-meta-web-pro-1", "ff-meta-web-pro-2", Arial, "Helvetica Neue", sans-serif;
+  cursor: pointer;
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  -moz-border-radius-topright: 5px;
+  -moz-border-radius-topleft: 5px;
+  -moz-border-radius-bottomright: 5px;
+  -moz-border-radius-bottomleft: 5px;
+  -webkit-border-top-right-radius: 5px;
+  -webkit-border-bottom-right-radius: 5px;
+  background: #e6e6e6 url('../images/gradient.png') repeat-x bottom left;
+  height: 47px;
+  width: 100%;
+  text-align: center;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 1);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1), 0 1px 0 rgba(255, 255, 255, 0.5) inset;
+  -moz-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1), 0 1px 0 rgba(255, 255, 255, 0.5) inset;
+  -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1), 0 1px 0 rgba(255, 255, 255, 0.5) inset;
+  border-image: initial;
 }
+
+input[type="submit"]:hover {
+    background-color: #8ECC4C;
+    color: white;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+    border-color: #6B9939;
+    border-bottom-color: #50732B;
+}
+
+/* form toggle */
+.form-toggle {
+    padding-bottom: 10px;
+    width: 97%;
+}
+.form-toggle form {
+    padding: 3px 6px;
+    margin:10px;
+    padding:20px;
+    border: 3px solid rgba(0,0,0,0.8);
+    border-radius: 5px;
+    background: rgba(0,0,0,0.05);
+}
+
+.middle_panel .form-toggle form {
+    margin-left:100px;
+}
+
+.middle_panel .big input {
+    height: 25px;
+}
+
 .form-toggle p {
     margin-bottom: 2px;
 }
 
 .form-toggle p span {
-/*    background: #DEF;*/
     padding: 3px 6px;
-/*    border-top: 1px solid #9BC;*/
-/*    border-left: 1px solid #9BC;*/
-/*    border-right: 1px solid #9BC;*/
-    cursor: pointer;
     padding: 7px;
     font-weight: bold;
-/*    background: #fcefbd;*/
-/*    border-top: 1px solid #e29311;*/
-/*    border-right: 1px solid #e29311;*/
-/*    border-left: 1px solid #e29311;*/
     border: 1px solid #ff5f10;
     color: white;
     padding: 3px 10px;
 }
 
-.form-toggle form {
-    padding: 3px 6px;
-    margin: 0;
-/*    background: #DEF;*/
-/*    border: 1px solid #9BC;*/
-    background: #fcefbd;
-/*    border: 1px solid #ff5f10;*/
-/*    width: 95%;*/
-/*    border: 1px solid #e29311;*/
+.form-toggle .submit-input-wrapper input {
+   margin-top:10px;
+   width: 30%;
+   height: 50px;
+   float: right;
+   font-size:105%;
 }
+
+.uniForm .inlineLabels .formHint {
+	font-size: 60%;
+	float: left !important;
+}
+
+.uniForm label {
+	text-align: left;
+	font-weight: bold;
+}
+
 /******************************************************************************/
 /* body */
 /******************************************************************************/
@@ -155,30 +194,6 @@ div.left_panel h1{
 div.left_right h2{
 }
 
-/******************************************************************************/
-/* pagination */
-
-.pagination {
-    margin: 10px 0;
-}
-.pagination .disabled {
-    padding: 3px;
-    color: #999;
-    border: 1px solid #CCC;
-}
-.pagination .current {
-    padding: 3px;
-    color: #FFF;
-    border: 1px solid #9BC;
-    background: #9BC;
-}
-.pagination a {
-    padding: 3px;
-    text-decoration: none;
-    border: 1px solid #9BC;
-    color: #444;
-    background: #DEF;
-}
 /******************************************************************************/
 /* footer */
 /******************************************************************************/
@@ -321,35 +336,42 @@ padding: 0 10px;
 /******************************************************************************/
 #tabhead {
     width: 100%;
-    height: 84px;
+    height: 50px;
+    background: url('../images/header-home-bg.png') left top repeat-x;
+    color: white;
+    margin-bottom: 0.5em;
 }
 /******************************************************************************/
 
 #tabhead .logo {
-    height: 25px;
-    padding-left: 5px;
-    padding-top:5px;
-    float: left;
+    float:left;
+    background: url('../images/200px-FoafLogo.svg.png') left top no-repeat;
+    background-size: 68px 45px;
+    width:260px;
+    height:50px;
+    padding-left:50px;
+    margin-left:20px;
 }
-#tabhead .logo img {
-    width: 188px;
-    height: 49px;
+
+#tabhead .logo h2, #tabhead .logo a {
+    font-size:110%;
+    margin-top:0px;
+    text-decoration: none;
+    -webkit-margin-before:0px;
+    color: white;
+    text-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
+    padding-top:10px;
 }
+
 /******************************************************************************/
 /* login */
 #tabhead .login {
-/*    position: absolute;*/
-/*    top: 6px;*/
-/*    right: 15px;*/
-/*    color: #DEF; */
-    /* login bar text colour */
-    color: #999;
-    font-size: 11px;
+    color: #fff;
     float: right;
-    width: 27%;
-    /*background-color: black;*/
-    margin: 6px 0 5px 0;
-/*    width: 27%;*/
+    width: 20%;
+    position: relative;
+    right: 10%;
+    font-size: 80%;
 }
 #tabhead .login a, #tabhead .login a:visited {
     color: #DEF; /* login bar link colour */
@@ -371,12 +393,12 @@ padding: 0 10px;
 }
 .login .col1{
     width: 61%;
-/*    width: 61%;*/
 }
 .login .col2{
     width: 18%;
     text-align: right;
 }
+
 .login .col2 b{
     margin-top: 2px;
 }
@@ -394,7 +416,6 @@ padding: 0 10px;
     margin-right: 4px;
     width: 12px;
     height: 12px;
-    border: none;
 }
 #tabhead select{
     background: #3F4348;
@@ -404,6 +425,7 @@ padding: 0 10px;
     border: 1px solid #666;
     margin-left: 5px;
 }
+
 /******************************************************************************/
 /* search */
 #search_box{
@@ -450,7 +472,6 @@ padding: 0 10px;
     color: #021736;
 }
 #subnav ul {
-/*    float: right;*/
     margin: 0 20px;
     padding: 0;
     margin-left: 10px;
@@ -463,19 +484,13 @@ padding: 0 10px;
 }
 
 #subnav ul a:link, #subnav ul a:visited {
-/*    float: left;*/
-/*    font-weight: bold;*/
     text-decoration: none;
-/*    color: #444;*/
-/*    padding: 4px 20px;*/
     padding: 4px 10px;
     padding-left: 0;
     color: #2368af;
 }
 
 #subnav ul a:hover {
-/*    color: #FFF;*/
-/*    background: #9BC;*/
     text-decoration: underline;
 }
 
@@ -620,19 +635,6 @@ width: 30%;
     font-style: italic;
 }
 
-
-.comment_add{
-    background: url(/site_media/pinax/images/silk/icons/comment_add.png) center left no-repeat;
-    padding-left: 17px;
-}
-/*.item input[type="submit"]{*/
-/*    background: url(/site_media/pinax/images/silk/icons/comment_delete.png) center left no-repeat;*/
-/*    padding-left: 15px;*/
-/*    border: none;*/
-/*    color: #d5890d;*/
-/*    float: right;*/
-/*    background: none;*/
-/*}*/
 .item {
 }
 .meta {
@@ -648,105 +650,13 @@ float: left;
 .form_comment{
 clear: both;
 }
-/******************************************************************************/
-/* what_next */
-/******************************************************************************/
-dl.what_next {
-    margin: 2em;
-}
-dl.what_next dt {
-    font-size: 120%;
-}
-dl.what_next dd {
-    margin: 0 0 1em 0;
-    font-style: italic;
-}
-p.what_next {
-    font-size: 120%;
-}
 
-/******************************************************************************/
-/* PHOTOS **************************************/
-/******************************************************************************/
-.thumb-row {
-    margin: 20px 0;
-    padding: 20px 0;
-}
-.gallery-photo-thumb {
-    width: 100px; 
-    margin: 10px 10px 20px 0;
-    float: left;
-    text-align: center;
-}
-
-.photo-right-profile, .photo-right-tools {
-    background: #DEF;
-    padding: 8px;
-    margin-bottom: 20px;
-}
-
-.photo-profile-details {
-    font-size: 0.9em;
-}
-
-.photo-avatar {
-    float: left;
-    margin-right: 10px;
-}
-
-.photo-avatar img {
-    border: 1px solid #666;
-}
-
-.photo-right-tools ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
-.photo-right-tools ul li {
-    background: #fff;
-    padding: 2px 4px;
-    margin: 2px 0;
-}
-
-.photo-right-tools li a {
-    text-decoration: none;
-}
-
-.photo-right-tools li:hover {
-    background: #DDDDDD;
-}
-
-.photo-profile-details h2 {
-    margin: 0;
-    padding: 0;
-    font-size: 1.1em;
-}
-
-.photo-right-tools h2 {
-    margin: 0 0 5px 0;
-    padding: 0;
-}
-
-#embed-code textarea {
-    width: 150px;
-    font-size: 0.8em;
-}
-div.embed {
-    margin: 10px 0;
-    font-style: none;
-}
-
-.photo-right-tools form {
-    margin: 0;
-    padding: 0;
-}
 
 
 /******************************************************************************/
 /* home page */
 /******************************************************************************/
+
 #home-header {
     background: url('../images/header-home-bg.png') left top repeat-x;
     color: white;
@@ -809,6 +719,15 @@ div.embed {
   -moz-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
   -webkit-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
 }
+
+.home-header-buttons a.reg:hover {
+  background-color: #8ECC4C;
+  color: white;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+  border-color: #6B9939;
+  border-bottom-color: #50732B;
+}
+
 .home-header-buttons .log-box {
   margin-top: -9px;
 }
@@ -835,5 +754,5 @@ div.embed {
 }
 
 #home-content {float:left; width:100%;}
-#home-content .left {float:left; width:45%; padding-left:5%; padding-top:5%;}
+#home-content .left {float:left; width:45%; padding-left:5%; padding-top:3%;}
 #home-content .right {float:right; width:45%; position:relative; right:20px;}

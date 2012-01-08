@@ -1,11 +1,10 @@
 {% extends "django_webid/provider/base.html" %}
 
 {% load i18n %}
-
 {% load uni_form_tags %}
 
 
-{% block head_title %}{% blocktrans %}WebID Register: Create User{% endblocktrans %}{% endblock %}
+{% block head_title %}{% blocktrans %}WebID Creation: Create User{% endblocktrans %}{% endblock %}
 
 {% block extra_head %}
 {% endblock %}
@@ -20,18 +19,21 @@
     </ul>
 {% endif %}
 
-<div class="left_panel">
+<div class="middle_panel">
 
     <h1>{% trans "WebID Certificate Generator" %}</h1>
+    <h2>{% trans "Step 1: Create User" %}</h2>
 
     
-    <div class="form-toggle">
+    <div class="form-toggle big">
         <form class="uniForm" method="POST" action="">
 	    {% csrf_token %}
             <fieldset class="inlineLabels">
                 {{ form|as_uni_form }}
                 <div class="form_block">
-                    <input type="submit" value="{% trans "Register User" %}" name="register"/>
+		    <div class="submit-input-wrapper">
+                    <input type="submit" value="{% trans "Create User" %}" name="register"/>
+	    	    </div>
                 </div>
             </fieldset>
         </form>

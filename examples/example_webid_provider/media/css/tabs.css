@@ -16,28 +16,17 @@
     padding-bottom: 1px; /* must be same thickness as tab border */
 }
 #tabhead .tab a, #tabhead .tab a:visited {
-/*    color: #444; */
-    /* unselected tab text colour */
-/*    font-weight: bold;*/
     text-decoration: none;
     color: white;
 }
 #tabhead .tab a:hover {
-/*    color: #666; */
-    /* unselected tab text hover colour */
     text-decoration: underline;
 }
 #tabhead .tab div {
-/*    background-color: #DDD; */
-    /* unselected tab colour */
     padding: 0;
-/*    padding-bottom: 4px;*/
-/*    padding-top: 5px;*/
     margin: 0 1px; /* to compensate for border */
-/*    padding-bottom: 7px;*/
-/*    padding-top: 8px;*/
-padding-top: 6px;
-padding-bottom: 6px;
+    padding-top: 6px;
+    padding-bottom: 6px;
 }
 #tabhead .tab div a {
 /*    padding: 5px 12px;*/
@@ -52,25 +41,11 @@ color: #999999;
 font-size: 10px;
 }
 #tabhead .right_tab {
-/*    position: absolute;*/
-/*    right: 15px;*/
-/*    bottom: -1px; */
     /* must be same thickness as tab border */
     clear: both;
     float: left;
-    padding-left: 150px;
-    padding-left: 24px;
-    width: 949px;
-/*    padding-top: 8px;*/
-/*    height: 34px;*/
-/*    border-top: 1px solid #ccc;*/
-/*    border-bottom: 1px solid #999;*/
-    border: 1px solid #999;
-    background: #3F4348 url('/site_media/static/images/rect-tabhead.png') left top repeat-x;
 }
 #tabhead .right_tab ul{
-/*    margin: 0;*/
-/*    padding: 0;*/
     display: inline;
     background: transparent;
 }
