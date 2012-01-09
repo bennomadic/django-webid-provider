@@ -74,6 +74,22 @@ color: #6da52b;
 /* forms */
 /******************************************************************************/
 
+#body form  {
+    margin-top:5%;
+}
+
+#body form table {
+    width: 30%;
+    margin-left:35%;
+}
+#body form p {
+    width: 100%;
+    -webkit-margin-before: 0px;
+    -webkit-margin-after: 0px;
+    float: left;
+    font-size: 90%;
+}
+
 input[type="text"], input[type="password"], textarea {
     margin: 3px;
     color: #666;
@@ -81,10 +97,16 @@ input[type="text"], input[type="password"], textarea {
     padding: 2px 3px;
 }
 
+input[value="login"] {
+	/*hack*/
+	float:left !important;
+	margin-left:58%;
+}
 
 input[type="submit"], input[type="button"],
 button, .button {
   color: #666;
+  float:right;
   font-weight: bold;
   font-family: "ff-meta-web-pro-1", "ff-meta-web-pro-2", Arial, "Helvetica Neue", sans-serif;
   cursor: pointer;
@@ -100,7 +122,7 @@ button, .button {
   -webkit-border-bottom-right-radius: 5px;
   background: #e6e6e6 url('../images/gradient.png') repeat-x bottom left;
   height: 47px;
-  width: 100%;
+  width: auto;
   text-align: center;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 1);
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1), 0 1px 0 rgba(255, 255, 255, 0.5) inset;
@@ -126,13 +148,13 @@ input[type="submit"]:hover {
     padding: 3px 6px;
     margin:10px;
     padding:20px;
-    border: 3px solid rgba(0,0,0,0.8);
-    border-radius: 5px;
-    background: rgba(0,0,0,0.05);
+    border: 6px solid rgba(0,0,0,0.5);
+    border-radius: 10px;
+    background: rgba(0,0,0,0.02);
 }
 
 .middle_panel .form-toggle form {
-    margin-left:100px;
+    margin-left:50px;
 }
 
 .middle_panel .big input {
@@ -141,6 +163,12 @@ input[type="submit"]:hover {
 
 .form-toggle p {
     margin-bottom: 2px;
+}
+
+.form-toggle p.errorField {
+    color:red;
+    font-weight: bold;
+    text-align:right;
 }
 
 .form-toggle p span {
@@ -173,9 +201,7 @@ input[type="submit"]:hover {
 /******************************************************************************/
 /* body */
 /******************************************************************************/
-#body {
-    margin: 0px;
-}
+
 div.right_panel {
     margin-top: 20px;
     float: right;
@@ -281,12 +307,14 @@ padding: 5px 0 0 0;
 #footer a:hover {
     color: #777; /* footer link hover colour */
 }
+
 #image_left {
     float:left;
     padding:0;
     margin:0;
 padding: 15px 0 0 0;
 }
+
 #image_right {
     float:right;
     padding:0;
@@ -294,17 +322,6 @@ padding: 15px 0 0 0;
 }
 
 
-.legal p{
-padding-top: 15px;
-margin-left: 90px;
-float: left;
-color: #585a5f;
-font-size: 11px;
-}
-
-#footer .legal p a {
-color: #6b747a;
-}
 
 #powered_by{
     clear:both;

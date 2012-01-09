@@ -4,14 +4,19 @@ pyOpenSSL>=0.10
 django-uni-form>=0.7.0
 django-defaultsite==1.1
 
+# These are optional. Working for the example site.
+# XXX integration pending.
+
+django-registration
+django-registration-defaults
+
+###########################################
 # git repos
 # FIXME put upstream when oucs merges fixes
 # and point to pypi when fixed
+# Now bennomadic's master has negotiate header and content negotiation.
 -e git://github.com/bennomadic/django-conneg.git#egg=django_conneg
- 
 
-
- 
-
-
+#django-registration-defaults
+#-e git://github.com/yourcelf/django-registration-defaults.git#egg=django-registration-defaults
 #django-staticfiles==0.1.2

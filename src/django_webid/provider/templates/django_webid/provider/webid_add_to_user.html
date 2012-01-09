@@ -4,7 +4,7 @@
 {% load uni_form_tags %}
 
 
-{% block head_title %}{% blocktrans %}WebID Client Certificate{% endblocktrans %}{% endblock %}
+{% block head_title %}{% blocktrans %}WebID: Client Certificate{% endblocktrans %}{% endblock %}
 
 {% block extra_head %}
 <script type="text/javascript" src="{{ MEDIA_URL }}django_webid/provider/js/jquery-1.7.min.js"></script>
@@ -51,9 +51,11 @@
 			})($);
 </script>
 
-<div class="left_panel" id="webid-block">
+<div class="middle_panel" id="webid-block">
 
-    <h1>{% trans "WebID Certificate Generator" %}</h1>
+    <h1>{% trans "Installing a WebID Certificate in your Browser" %}</h1>
+    <p>After clicking the "Give me a cert!" button, a certificate will be created and installed in your browser. This certificate will point to your WebID URI on this site, and you'll be able to use it to log-in in all the WebID-enabled sites.</p>
+    <p>How should this cert installation step look like? (help links with screenshots)</p>
 
     {#% include "django_webid/provider/webid_intro.html" %#}
     
@@ -78,7 +80,8 @@
 	<input type="submit" value="{% trans "Install my WebID in this browser" %}" id="autowebidinstall"/>
 </div>
 {% endif %}
-
+{# XXX move image to css #}
+<img src="{{MEDIA_URL}}django_webid/provider/images/idlewheel.gif"/>
 {% endblock %}
 
 {% block extra_body %}

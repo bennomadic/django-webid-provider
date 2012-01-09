@@ -1,15 +1,35 @@
 from django.conf.urls.defaults import *
 from django.views.generic.simple import redirect_to
+from django.views.generic.list_detail import object_list
 from django_webid.provider import views, webiduri
+from django_webid.provider.models import Cert
 
 urlpatterns = patterns('',
     #Main, WORKING urls
 
     #temporary REDIRECT
-    #XXX we need a info page here
+    # XXX we need a info page here
+    # XXX move to the sample project
     url(r'^$', redirect_to, {'url':'cert/add'}),
+    url(r'^logout$', views.logout_view, name="webidprovider-logout"),
 
+    ###################################
+    #BEGIN django_webid.provider views
+
+    #cert/(id)--> views.cert_edit
+    #cert/(id)/edit --> post view?
+    #cert/(id)/del
+    #certs/all/ --> take all objects from pubkey manager (currently should
+    #be only active)
+    url(r'^certs$', views.cert_list_by_user, name="webidprovider-cert_list"),
     url(r'^cert/add$', views.add_cert_to_user, name="webidprovider-add_cert"),
+    url(r'^cert/(?P<cert_id>\d+)/$', views.cert_detail,
+        name="webidprovider-cert-detail"),
+    url(r'^cert/(?P<cert_id>\d+)/revoke$', views.cert_revoke,
+        name="webidprovider-cert-revoke"),
+
+    #Our user creation view.
+    #XXX we should move it to example site too.
     url(r'^user/add$', views.create_user, name='webidprovider-create_user'),
 
     #WebID Profile / Foaf publishing...
@@ -23,7 +43,7 @@ urlpatterns = patterns('',
 
     ################################################
     ################################################
-    # Other tests: to be cleaned from here...
+    # Some other, older tests: to be cleaned from here...
     # Might be BROKEN
 
     url(r'^cert/p12/add$', views.webid_identity,

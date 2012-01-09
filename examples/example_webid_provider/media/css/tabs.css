@@ -28,12 +28,10 @@
     padding-top: 6px;
     padding-bottom: 6px;
 }
+
 #tabhead .tab div a {
-/*    padding: 5px 12px;*/
-/*    padding: 5px 14px;*/
     padding: 7px 14px 6px 14px;
     font-size: 11px;
-    font-family: Verdana, Arial, Helvetica, freesans;
 }
 #tabhead .tab div .disabled a, #tabhead .tab div.disabled a:visited {
     padding: 7px 9px 6px 14px;

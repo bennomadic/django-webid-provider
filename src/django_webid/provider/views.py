@@ -3,7 +3,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Copyright (C) 2011 julia dot anaya at gmail dot com
+# Copyright (C) 2011 bennomadic at gmail dot com
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by the
@@ -20,7 +20,7 @@
 
     :authors:       Ben Carrillo, Julia Anaya
     :organization:  rhizomatik labs
-    :copyright:     author
+    :copyright:     Cooperative Quinode
     :license:       GNU GPL version 3 or any later version
                     (details at http://www.gnu.org)
     :contact:       bennomadic at gmail dot com
@@ -36,22 +36,26 @@ import re
 
 #from datetime import datetime
 
-from django.http import HttpResponse
+from django import template
+
+from django.contrib.auth import logout
+from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response, redirect,\
         get_object_or_404
 from django.template import RequestContext
-from django import template
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
+from django.views.generic import list_detail
 from django.conf import settings
 from django.db import models
+
 
 #XXX this import should be handled on certs.utils now
 from OpenSSL import crypto
 
 #XXX FIXME fix relative imports
 #from .models import PubKey,
-from .models import WebIDUser, CertConfig
+from .models import WebIDUser, CertConfig, Cert
 #from .certs.utils import create_cert # deprecated
 from .certs.utils import CertCreator
 
@@ -59,7 +63,6 @@ from .certs.utils import CertCreator
 #XXX PKCS12 SHIT
 #... that we could shut down by the moment...
 from .certs.utils import gen_httpwebid_selfsigned_cert_pemfile, pemfile_2_pkcs12file
-
 from .forms import WebIdIdentityForm
 
 
@@ -82,6 +85,8 @@ from django.dispatch import receiver
 ################
 # CREATE USER
 ################
+
+#XXX we should hook django register app here, instead of this
 
 def create_user(request):
     """
@@ -139,14 +144,76 @@ def create_user(request):
      }, context_instance=RequestContext(request))
 
 
+####################
+# Log out
+###################
+
+def logout_view(request):
+    logout(request)
+    return redirect('/')
+
+
+#####################
+# CERT:LIST
+#####################
+@login_required
+def cert_list_by_user(request):
+    try:
+        certs = Cert.objects.filter(pubkey__user=request.user)
+    except Cert.DoesNotExist:
+        raise Http404
+
+    # Use the object_list view for the heavy lifting.
+    return list_detail.object_list(
+        request,
+        queryset = certs,
+        template_name = "django_webid/provider/cert_list.html",
+        #XXX not working with template object name??
+        #template_object_name = "certs",
+    )
+
+#####################
+# CERT:DETAIL
+#####################
+@login_required
+def cert_detail(request, cert_id):
+    # Look up the Cert (and raise a 404 if she's not found)
+    cert = get_object_or_404(Cert, pk=cert_id)
+    if cert.pubkey.user != request.user:
+        raise Http404
+
+    # Show the detail page
+    return list_detail.object_detail(
+        request,
+        queryset = Cert.objects.all(),
+        object_id = cert_id,
+        template_name = "django_webid/provider/cert_detail.html"
+    )
+
+#####################
+# CERT:REVOKE
+#####################
+@login_required
+def cert_revoke(request, cert_id):
+    # Look up the Cert (and raise a 404 if she's not found)
+    cert = get_object_or_404(Cert, pk=cert_id)
+    if cert.pubkey.user != request.user:
+        raise Http404
+
+    # Show the detail page
+    return list_detail.object_detail(
+        request,
+        queryset = Cert.objects.all(),
+        object_id = cert_id,
+        template_name = "django_webid/provider/cert_revoke.html"
+    )
 
 #####################
 # CERT:ADD
 #####################
-
 @login_required
 #XXX doubt... will this decorator work also for webid-auth?
-#if not logged in, it should check if anon register is allowed
+# not logged in, it should check if anon register is allowed
 #and redirect there...
 #XXX but now it's redirecting to the accounts url that is not
 #being loaded...

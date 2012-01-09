@@ -1,0 +1,45 @@
+{% extends "django_webid/provider/base.html" %}
+
+{% load i18n %}
+{% load uni_form_tags %}
+
+
+{% block head_title %}{% blocktrans %}WebID Certs List{% endblocktrans %}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block body %}
+
+{% if messages %}
+    <ul id="messages">
+        {% for message in messages %}
+        <li id="message_{{ forloop.counter }}">{{message}}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<div class="middle_panel">
+    <h1 style="color:red">Are you sure you want to revoke this cert?</h1>
+    <form action="/webid/cert/1/revoke">
+	    <input type="submit" value="Yes, I want to revoke this cert forever"/>
+    </form>
+    <div class="clearfix"></div>
+
+    <h1>{% trans "WebID Certificate Details" %}</h1>
+
+    <p>Sha1 Fingerprint: {{ object.fingerprint_sha1 }}</p>
+    <p>Valid From: {{object.valid_from}}</p>
+    <p>Valid Until: {{object.expires}}</p>
+
+    <h2>Public Key on this Certificate</h2>
+    <p>Bits: {{object.pubkey.bits}}</p>
+    <p>Modulus: {{object.pubkey.mod}}</p>
+    <p>Exponent: {{object.pubkey.exp}}</p>
+</div>
+
+{% endblock %}
+
+{% block extra_body %}
+{% endblock %}
+

@@ -123,6 +123,7 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
+    'registration_defaults',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -135,6 +136,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'uni_form',
     'defaultsite',
+    'registration',
     'django_webid.provider',
 )
 

@@ -21,9 +21,11 @@
 
 <div class="middle_panel">
 
-    <h1>{% trans "WebID Certificate Generator" %}</h1>
-    <h2>{% trans "Step 1: Create User" %}</h2>
-
+    <h1>{% trans "Create Your User" %}</h1>
+    <p>On this site, you need to create a password-protected user first, which you will use to edit your profile. If you ever lose access to your WebID browser credentials, you can use the password you are setting on this step to create a new certificate.</p>
+    <p>Your WebID URI will be:</p>
+    {# XXX dynamically build WebID URI here #}
+    {# XXX with some js. We cannot use the reverse yet since we do not have an username. Or can we? Hint: using a placeholder #}
     
     <div class="form-toggle big">
         <form class="uniForm" method="POST" action="">
