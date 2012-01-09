@@ -152,6 +152,9 @@ def logout_view(request):
     logout(request)
     return redirect('/')
 
+###########################################
+# CERTS VIEWS                             #
+###########################################
 
 #####################
 # CERT:LIST
@@ -279,8 +282,56 @@ def add_cert_to_user(request):
         'messages': messages},
         context_instance=RequestContext(request))
 
+def add_cert_to_user_iframe(request):
+    messages = []
+    if request.method == 'POST':
+        if request.POST.has_key('pubkey'):
+            user = request.user
+            spkac_str = str(request.POST['pubkey'])
+
+            kwargs = {}
+
+            c = CertCreator(spkac_str, user, **kwargs)
+            c.create_cert()
+            certdump = c.get_b64_cert_dump()
+            sha1fingerprint = c.get_sha1_fingerprint()
+
+            #Iframe use like this:
+            #http://blog.magicaltux.net/2009/02/09/using-ssl-keys-for-client-authentification/
+            #XXX with the ifrmae, it gets installed in Chrome,
+            #but no sucess popup appears :(
+            #FIXME this has advantages, but also
+            #user won't spot a failed cert installation
+            #XXX use iframe only if firefox???
+            #XXX try multipart-mime???
+
+            return render_to_response(
+                    'django_webid/provider/webid_b64_cert.html',
+                    {
+                        "MEDIA_URL": settings.MEDIA_URL,
+                        "STATIC_URL": settings.STATIC_URL,
+                        "b64cert": certdump,
+                        "sha1fingerprint": sha1fingerprint,
+                        "user": request.user,
+                        }, context_instance=RequestContext(request))
+
+    app_conf = CertConfig.objects.single()
+    r = random.getrandbits(100)
+    challenge = hashlib.sha1(str(r)).hexdigest()
+
+    return render_to_response('django_webid/provider/webid_add_to_user.html',
+        {
+        "HIDE_KEYGEN_FORM": app_conf.hide_keygen_form,
+        "MEDIA_URL": settings.MEDIA_URL,
+        "ADMIN_MEDIA_PREFIX": settings.ADMIN_MEDIA_PREFIX,
+        "STATIC_URL": settings.STATIC_URL,
+        "challenge": challenge,
+        'messages': messages},
+        context_instance=RequestContext(request))
+
 
 ###########################################
+
 # WEBID VIEWS                             #
 ###########################################
 # Deprecated by the content-negotiated view
@@ -298,13 +349,6 @@ def render_webid(request, username=None):
              #, context_instance=RequestContext(request))
 
 
-###########################################
-# CERTS VIEWS                             #
-###########################################
-# functions for add / display / remove (remove
-# should maybe mark a cert as non active??)
-# we could change the manager... objects = filter(active=True)
-# and leave the old manager as a legacy manager objects_all
 
 
 

@@ -15,19 +15,18 @@ urlpatterns = patterns('',
     ###################################
     #BEGIN django_webid.provider views
 
-    #cert/(id)--> views.cert_edit
-    #cert/(id)/edit --> post view?
-    #cert/(id)/del
     #certs/all/ --> take all objects from pubkey manager (currently should
     #be only active)
     url(r'^certs$', views.cert_list_by_user, name="webidprovider-cert_list"),
     url(r'^cert/add$', views.add_cert_to_user, name="webidprovider-add_cert"),
+    #XXX testing iframe
+    url(r'^cert/add2$', views.add_cert_to_user_iframe, name="webidprovider-add_cert2"),
     url(r'^cert/(?P<cert_id>\d+)/$', views.cert_detail,
         name="webidprovider-cert-detail"),
     url(r'^cert/(?P<cert_id>\d+)/revoke$', views.cert_revoke,
         name="webidprovider-cert-revoke"),
 
-    #Our user creation view.
+    #Our simple user creation view.
     #XXX we should move it to example site too.
     url(r'^user/add$', views.create_user, name='webidprovider-create_user'),
 

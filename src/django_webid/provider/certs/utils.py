@@ -113,6 +113,9 @@ class CertCreator(object):
         # challenge thing (spkac is using md5, so
         # I guess there should be some time bound)
         # maybe linked to session or something???
+        # See https://www.w3.org/Bugs/Public/show_bug.cgi?id=13518
+        #http://www.w3.org/wiki/Foaf%2Bssl/Clients#Keygen
+        # We could der-decode the spkac and get the challenge from there.
 
         spkac_str = re.sub('\s', '', spkac_str)
         #print('SPKAC PUBKEY=%s' % spkac_str)
@@ -343,6 +346,8 @@ class CertCreator(object):
         c = Cert()
         c.fingerprint_sha1, \
         c.fingerprint_md5 = self._get_cert_hashes()
+        self.fingerprint_md5 = c.fingerprint_md5
+        self.fingerprint_sha1 = c.fingerprint_sha1
         c.pubkey = self.pk_instance
 
         c.valid_from = self.vdata_cert['notBefore']
@@ -406,6 +411,17 @@ class CertCreator(object):
         dump of the certificate.
         """
         return self.cert_dump
+
+    def get_b64_cert_dump(self):
+        """
+        returns a string containing the
+        base64 representation of the certificate
+        dump
+        """
+        return base64.b64encode(self.cert_dump)
+
+    def get_sha1_fingerprint(self):
+        return self.fingerprint_sha1
 
 
 
