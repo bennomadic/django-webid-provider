@@ -193,20 +193,36 @@ def cert_detail(request, cert_id):
 #####################
 # CERT:REVOKE
 #####################
+def revoke_cert(cert):
+    cert.pubkey.is_active = False
+    cert.pubkey.save()
+
 @login_required
 def cert_revoke(request, cert_id):
-    # Look up the Cert (and raise a 404 if she's not found)
+    # Look up the Cert (and raise a 404 if not found)
     cert = get_object_or_404(Cert, pk=cert_id)
     if cert.pubkey.user != request.user:
         raise Http404
 
-    # Show the detail page
-    return list_detail.object_detail(
-        request,
-        queryset = Cert.objects.all(),
-        object_id = cert_id,
-        template_name = "django_webid/provider/cert_revoke.html"
-    )
+    if request.method == "POST":
+        hidden  = request.POST.get('post', None)
+        if hidden and hidden == "yes":
+            revoke_cert(cert)
+            #XXX we should use messages here.
+            return render_to_response('django_webid/provider/cert_revoked.html',
+                {
+                    "MEDIA_URL": settings.MEDIA_URL,
+                    "STATIC_URL": settings.STATIC_URL,
+                })
+    if request.method == "GET":
+        # Show the detail page
+        # with a confirmation message.
+        return list_detail.object_detail(
+            request,
+            queryset = Cert.objects.all(),
+            object_id = cert_id,
+            template_name = "django_webid/provider/cert_revoke.html"
+        )
 
 #####################
 # CERT:ADD

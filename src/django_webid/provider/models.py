@@ -104,6 +104,15 @@ class CertConfig(models.Model):
         return "Default Configuration for WebID Certificates"
 
 
+class ActivePubKeyManager(models.Manager):
+    """
+    default manager for PubKey. returns only
+    the PubKeys with is_active = True
+    """
+    def get_query_set(self):
+        return super(ActivePubKeyManager,
+                self).get_query_set().filter(is_active=True)
+
 class PubKey(models.Model):
     #XXX in admin, should use inline
     #for viewing the cert at the same time.
@@ -119,6 +128,11 @@ class PubKey(models.Model):
     created = models.DateTimeField(blank=True)
 
     user = models.ForeignKey(User)
+
+    #we preserve the original manager
+    objects = models.Manager()
+    #we only count the active PubKeys
+    active_objects = ActivePubKeyManager()
 
     @property
     def date_created(self):
@@ -140,6 +154,14 @@ class PubKey(models.Model):
         verbose_name_plural = "Public Keys"
         db_table = "webid_provider_pubkey"
 
+class ActiveCertManager(models.Manager):
+    """
+    default manager for Certs. returns only
+    the Certs with PubKeys in which is_active = True
+    """
+    def get_query_set(self):
+        return super(ActiveCertManager,
+                self).get_query_set().filter(pubkey__is_active=True)
 
 class Cert(models.Model):
 
@@ -163,6 +185,9 @@ class Cert(models.Model):
     #in which browser was installed...
 
     #Format (pkcs10, 12, 7...)
+
+    objects = ActiveCertManager()
+    all_objects = models.Manager()
 
     class Meta:
         verbose_name = "x509 Certificate"

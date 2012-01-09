@@ -20,10 +20,19 @@
 {% endif %}
 
 <div class="middle_panel">
-    <h1 style="color:red">Are you sure you want to revoke this cert?</h1>
-    <form action="/webid/cert/1/revoke">
+    {# FIXME move to CSS!!! #}
+    {% if object.pubkey.is_active %}
+    <h1 class="danger">Are you sure? Do you want to revoke this cert?</h1>
+    <p class="danger">If you revoke this cert now, its public key details  will be removed from your public WebID profile, and you will not be able to use the matching cert in your browser on any site.</p>
+    <form action="" method="post">
+	    {% csrf_token %}
 	    <input type="submit" value="Yes, I want to revoke this cert forever"/>
+	    <input type="hidden" name="post" value="yes"/>
     </form>
+    {% else %}
+    <h1 class="error">This certificate has already been revoked.</h1>
+    <p class="error">So no, you cannot revoke it again. And by the way, you also cannot use if for anything useful now.</p>
+    {% endif %}
     <div class="clearfix"></div>
 
     <h1>{% trans "WebID Certificate Details" %}</h1>

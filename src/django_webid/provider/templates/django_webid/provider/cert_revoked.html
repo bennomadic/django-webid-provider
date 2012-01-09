@@ -1,0 +1,32 @@
+{% extends "django_webid/provider/base.html" %}
+
+{% load i18n %}
+{% load uni_form_tags %}
+
+
+{% block head_title %}{% blocktrans %}WebID Certs List{% endblocktrans %}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block body %}
+
+{% if messages %}
+    <ul id="messages">
+        {% for message in messages %}
+        <li id="message_{{ forloop.counter }}">{{message}}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<div class="middle_panel">
+    {# should use messages here #}
+    <h1>Your cert has been revoked</h1>
+    <h2><a href="{% url webidprovider-cert_list %}">Back to your WebID certificates list</a></h2>
+</div>
+
+{% endblock %}
+
+{% block extra_body %}
+{% endblock %}
+

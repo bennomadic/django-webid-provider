@@ -8,7 +8,6 @@ urlpatterns = patterns('',
     #Main, WORKING urls
 
     #temporary REDIRECT
-    # XXX we need a info page here
     # XXX move to the sample project
     url(r'^$', redirect_to, {'url':'cert/add'}),
     url(r'^logout$', views.logout_view, name="webidprovider-logout"),

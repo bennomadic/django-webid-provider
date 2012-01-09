@@ -33,6 +33,7 @@ h2 { font-size: 1.4em;}
 h3 { font-size: 1.2em;}
 
 .clearfix {clear:both; margin: 0px;}
+.error, .danger {color:red;}
 
 /******************************************************************************/
 /* general */
