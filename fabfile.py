@@ -74,6 +74,14 @@ def init_and_deploy():
     print("")
     print(green("[OK] Code has been deployed"))
 
+def reset_db():
+    code_dir = env.code_dir
+    with cd(code_dir):
+        run("git pull origin master")
+        run("~/webid_scripts/webid_reset_db.sh")
+    print ""
+    print(green("[OK] Database has been reset (with no mercy)"))
+
 ###############################################
 # to check (copied from somewhere, not working
 # with last versions)
