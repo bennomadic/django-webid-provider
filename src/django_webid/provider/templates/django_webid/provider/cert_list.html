@@ -26,7 +26,7 @@
     <p>These below are all the valid certificates that you have installed (in any of your browsers). You can click on them to see more details, or click "revoke" if you no longer want to be able to use either of them.</p>
     <ul>
     {% for cert in object_list %}
-    <li><a href="{% url webidprovider-cert-detail cert_id=cert.id %}">{{ cert.fingerprint_sha1 }}</a> {{ cert.valid_from }} {{ cert.expires }} <a class="danger" href="{% url webidprovider-cert-revoke cert_id=cert.id %}">revoke</a></li>
+    <li><a href="{% url webidprovider-cert-detail cert_id=cert.id %}">sha1: {{ cert.fingerprint_sha1 }}</a> {{ cert.valid_from }} {{ cert.expires }} <a class="danger" href="{% url webidprovider-cert-revoke cert_id=cert.id %}">revoke</a></li>
     {% endfor %}
     </ul>
 
