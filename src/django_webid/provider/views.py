@@ -255,12 +255,19 @@ def add_cert_to_user(request):
             else:
                 do_multipart = False
 
+            skip_issuer_signing = request.REQUEST.get('skipsign', False)
+            if skip_issuer_signing and skip_issuer_signing=="true":
+                skip_sign = True
+            else:
+                skip_sign = False
+
             #XXX should catch exceptions here (bad pubkey???)
             #XXX or tampered challenge :)
 
             kwargs = {}
             kwargs['user_agent_string'] = request.META['HTTP_USER_AGENT']
-            #XXX get kwargs from the post advanced fields
+            kwargs['skip_sign'] = skip_sign
+            #XXX TODO get kwargs from the post advanced fields
             c = CertCreator(spkac_str, user, **kwargs)
             c.create_cert()
 
@@ -270,7 +277,6 @@ def add_cert_to_user(request):
                 # works on FF, opera. Not working in chrome
                 #Iframe use like this:
                 #http://blog.magicaltux.net/2009/02/09/using-ssl-keys-for-client-authentification/
-                #XXX try multipart-mime???
 
                 certdump = c.get_b64_cert_dump()
                 sha1fingerprint = c.get_sha1_fingerprint()
@@ -290,7 +296,7 @@ def add_cert_to_user(request):
                 # As a workaround for iframes, experimenting with multipart
                 # black magic
                 # XXX Here Be Dragons
-                print 'doing multipart'
+                # chrome also misbehaves with this :(
                 certdump = c.get_cert_dump()
                 #r = HttpResponse(mimetype="application/x-x509-user-cert")
                 BOUND = "BOUND"
@@ -327,7 +333,8 @@ def add_cert_to_user(request):
         "ADMIN_MEDIA_PREFIX": settings.ADMIN_MEDIA_PREFIX,
         "STATIC_URL": settings.STATIC_URL,
         "challenge": challenge,
-        'messages': messages},
+        'messages': messages,
+        'user':request.user},
         context_instance=RequestContext(request))
 
 
@@ -465,10 +472,10 @@ def webid_identity(request):
                     gen_httpwebid_selfsigned_cert_pemfile(webid, nick=nick)
                     #XXX THIS IS THE SECOND MIX USE OF OPENSSL/M2CRYPTO
                     path = pemfile_2_pkcs12file()
-                    print "PKC12 path: " + path
+                    #print "PKC12 path: " + path
                 except Exception, e:
                     message = "Error trying to generate client certificate: " + str(e)
-                    print message
+                    #print message
                     messages.append(message)
                     # can not continue
                 else:

@@ -33,6 +33,8 @@ class CertCreator(object):
         """
         #XXX FIXME get spkac_str as a kw arg.
         self.user_agent_string = kwargs.get('user_agent_string', None)
+        self.skip_sign = kwargs.get('skip_sign', False)
+
         self._get_cert_configs(**kwargs)
         self._get_user_data(user)
         self._get_csr(spkac_str)
@@ -378,13 +380,6 @@ class CertCreator(object):
         ######################
         #CERT CREATION PROCESS
         ######################
-
-        #XXX OK, this **seems** to be working
-        #at least it's working against my implementation
-        #of webidauth.
-        #we still need to check against a 3rd party
-        #webid service (testsuite at fcns.eu)
-
         self._set_cert_subject()
         self._set_common_name()
         self._set_pubkey()
@@ -399,12 +394,14 @@ class CertCreator(object):
         #but where do we store the pkey safely?
         #The funny thing is that we only need the signature
         #so the browser's cert store does not crash...
-        if not hasattr(self, 'issuerKey'):
-            issuerKey = self._create_key_pair(
-                    crypto.TYPE_RSA, 1024)
-        else:
-            issuerKey = self.issuerKey
-        self._sign(issuerKey)
+
+        if not self.skip_sign:
+            if not hasattr(self, 'issuerKey'):
+                issuerKey = self._create_key_pair(
+                        crypto.TYPE_RSA, 1024)
+            else:
+                issuerKey = self.issuerKey
+            self._sign(issuerKey)
 
         #saving instances
         #XXX transaction block?
