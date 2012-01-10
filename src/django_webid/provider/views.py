@@ -249,6 +249,12 @@ def add_cert_to_user(request):
             else:
                 do_iframe = False
 
+            return_multipart = request.REQUEST.get('multipart', None)
+            if return_multipart and return_multipart == "true":
+                do_multipart = True
+            else:
+                do_multipart = False
+
             #XXX should catch exceptions here (bad pubkey???)
             #XXX or tampered challenge :)
 
@@ -258,15 +264,8 @@ def add_cert_to_user(request):
             c = CertCreator(spkac_str, user, **kwargs)
             c.create_cert()
 
-            if not do_iframe:
-                # We deliver the cert as the only response
-                certdump = c.get_cert_dump()
 
-                r = HttpResponse(mimetype="application/x-x509-user-cert")
-                r.write(certdump)
-                return r
-
-            else:
+            if do_iframe:
                 # We create an iframe with b64encoded cert as src.
                 # works on FF, opera. Not working in chrome
                 #Iframe use like this:
@@ -287,6 +286,35 @@ def add_cert_to_user(request):
                             "user": request.user,
                             }, context_instance=RequestContext(request))
 
+            if do_multipart:
+                # As a workaround for iframes, experimenting with multipart
+                # black magic
+                # XXX Here Be Dragons
+                print 'doing multipart'
+                certdump = c.get_cert_dump()
+                #r = HttpResponse(mimetype="application/x-x509-user-cert")
+                BOUND = "BOUND"
+                r = HttpResponse(
+                        mimetype="multipart/x-mixed-replace;boundary=%s" % BOUND)
+
+                N = "\r\n"
+                NN = "\r\n\n"
+
+                r.write(BOUND + N + 'Content-Type: application/x-x509-user-cert' + NN)
+                r.write(certdump)
+                r.write(N + "--" + BOUND + N + 'Content-Type: text/html' + NN)
+                r.write("<html><body><h1>hello world! did you see my cert???</h1></body></html>")
+                r.write(N + "--" + BOUND + "--")
+                return r
+
+            if not do_iframe:
+                # We deliver the cert as the only response
+                certdump = c.get_cert_dump()
+                r = HttpResponse(mimetype="application/x-x509-user-cert")
+                r.write(certdump)
+                return r
+
+
 
     app_conf = CertConfig.objects.single()
     r = random.getrandbits(100)
@@ -302,8 +330,8 @@ def add_cert_to_user(request):
         'messages': messages},
         context_instance=RequestContext(request))
 
-###########################################
 
+###########################################
 # WEBID VIEWS                             #
 ###########################################
 # Deprecated by the content-negotiated view
