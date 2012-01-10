@@ -32,7 +32,7 @@ class CertCreator(object):
         parameters for the cert creation (from advanced views).
         """
         #XXX FIXME get spkac_str as a kw arg.
-
+        self.user_agent_string = kwargs.get('user_agent_string', None)
         self._get_cert_configs(**kwargs)
         self._get_user_data(user)
         self._get_csr(spkac_str)
@@ -339,20 +339,27 @@ class CertCreator(object):
                             hexdigest()),
                 beautify(
                     hashlib.md5(self.cert_dump).\
+                            hexdigest()),
+                beautify(
+                    hashlib.sha256(self.cert_dump).\
                             hexdigest()))
 
     def _save_cert_instance(self):
         from django_webid.provider.models import Cert
         c = Cert()
         c.fingerprint_sha1, \
-        c.fingerprint_md5 = self._get_cert_hashes()
+        c.fingerprint_md5,\
+        c.fingerprint_sha256 = self._get_cert_hashes()
         self.fingerprint_md5 = c.fingerprint_md5
         self.fingerprint_sha1 = c.fingerprint_sha1
+        self.fingerprint_sha256 = c.fingerprint_sha256
+
         c.pubkey = self.pk_instance
 
         c.valid_from = self.vdata_cert['notBefore']
         c.expires = self.vdata_cert['notAfter']
 
+        c.user_agent_string = self.user_agent_string
         c.save()
 
 

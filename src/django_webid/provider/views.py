@@ -243,30 +243,50 @@ def add_cert_to_user(request):
             user = request.user
             spkac_str = str(request.POST['pubkey'])
 
-            #XXX should catch exception here (bad pubkey???)
+            return_iframe = request.REQUEST.get('iframe', None)
+            if return_iframe and return_iframe == "true":
+                do_iframe = True
+            else:
+                do_iframe = False
+
+            #XXX should catch exceptions here (bad pubkey???)
             #XXX or tampered challenge :)
 
             kwargs = {}
+            kwargs['user_agent_string'] = request.META['HTTP_USER_AGENT']
             #XXX get kwargs from the post advanced fields
-
-            ####################################################
-            #XXX DEBUG ------------------ TO BE REMOVED
-            #FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            #import datetime
-            #kwargs['for_days']=90
-            #kwargs['from_days']=60
-            ##kwargs['valid_from_ts'] = datetime.datetime(2012,1,1,12,0,0)
-            ##kwargs['expires_ts'] = datetime.datetime(2012, 12, 31, 12, 0)
-            #FIXME !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            ####################################################
-
             c = CertCreator(spkac_str, user, **kwargs)
             c.create_cert()
-            certdump = c.get_cert_dump()
 
-            r = HttpResponse(mimetype="application/x-x509-user-cert")
-            r.write(certdump)
-            return r
+            if not do_iframe:
+                # We deliver the cert as the only response
+                certdump = c.get_cert_dump()
+
+                r = HttpResponse(mimetype="application/x-x509-user-cert")
+                r.write(certdump)
+                return r
+
+            else:
+                # We create an iframe with b64encoded cert as src.
+                # works on FF, opera. Not working in chrome
+                #Iframe use like this:
+                #http://blog.magicaltux.net/2009/02/09/using-ssl-keys-for-client-authentification/
+                #XXX try multipart-mime???
+
+                certdump = c.get_b64_cert_dump()
+                sha1fingerprint = c.get_sha1_fingerprint()
+
+
+                return render_to_response(
+                        'django_webid/provider/webid_b64_cert.html',
+                        {
+                            "MEDIA_URL": settings.MEDIA_URL,
+                            "STATIC_URL": settings.STATIC_URL,
+                            "b64cert": certdump,
+                            "sha1fingerprint": sha1fingerprint,
+                            "user": request.user,
+                            }, context_instance=RequestContext(request))
+
 
     app_conf = CertConfig.objects.single()
     r = random.getrandbits(100)
@@ -281,54 +301,6 @@ def add_cert_to_user(request):
         "challenge": challenge,
         'messages': messages},
         context_instance=RequestContext(request))
-
-def add_cert_to_user_iframe(request):
-    messages = []
-    if request.method == 'POST':
-        if request.POST.has_key('pubkey'):
-            user = request.user
-            spkac_str = str(request.POST['pubkey'])
-
-            kwargs = {}
-
-            c = CertCreator(spkac_str, user, **kwargs)
-            c.create_cert()
-            certdump = c.get_b64_cert_dump()
-            sha1fingerprint = c.get_sha1_fingerprint()
-
-            #Iframe use like this:
-            #http://blog.magicaltux.net/2009/02/09/using-ssl-keys-for-client-authentification/
-            #XXX with the ifrmae, it gets installed in Chrome,
-            #but no sucess popup appears :(
-            #FIXME this has advantages, but also
-            #user won't spot a failed cert installation
-            #XXX use iframe only if firefox???
-            #XXX try multipart-mime???
-
-            return render_to_response(
-                    'django_webid/provider/webid_b64_cert.html',
-                    {
-                        "MEDIA_URL": settings.MEDIA_URL,
-                        "STATIC_URL": settings.STATIC_URL,
-                        "b64cert": certdump,
-                        "sha1fingerprint": sha1fingerprint,
-                        "user": request.user,
-                        }, context_instance=RequestContext(request))
-
-    app_conf = CertConfig.objects.single()
-    r = random.getrandbits(100)
-    challenge = hashlib.sha1(str(r)).hexdigest()
-
-    return render_to_response('django_webid/provider/webid_add_to_user.html',
-        {
-        "HIDE_KEYGEN_FORM": app_conf.hide_keygen_form,
-        "MEDIA_URL": settings.MEDIA_URL,
-        "ADMIN_MEDIA_PREFIX": settings.ADMIN_MEDIA_PREFIX,
-        "STATIC_URL": settings.STATIC_URL,
-        "challenge": challenge,
-        'messages': messages},
-        context_instance=RequestContext(request))
-
 
 ###########################################
 

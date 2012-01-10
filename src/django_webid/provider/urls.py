@@ -19,8 +19,6 @@ urlpatterns = patterns('',
     #be only active)
     url(r'^certs$', views.cert_list_by_user, name="webidprovider-cert_list"),
     url(r'^cert/add$', views.add_cert_to_user, name="webidprovider-add_cert"),
-    #XXX testing iframe
-    url(r'^cert/add2$', views.add_cert_to_user_iframe, name="webidprovider-add_cert2"),
     url(r'^cert/(?P<cert_id>\d+)/$', views.cert_detail,
         name="webidprovider-cert-detail"),
     url(r'^cert/(?P<cert_id>\d+)/revoke$', views.cert_revoke,

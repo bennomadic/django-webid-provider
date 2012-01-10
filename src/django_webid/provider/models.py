@@ -175,15 +175,17 @@ class Cert(models.Model):
     #upcoming expirations.
 
     #fingerprint is a property of PubKey or of Cert???
+    fingerprint_sha256 = models.CharField(max_length=95)
     fingerprint_sha1 = models.CharField(max_length=60)
     fingerprint_md5 = models.CharField(max_length=50)
 
-    #algorithm??
 
-    #User agent, maybe??
     #It can help the user to recognize
     #in which browser was installed...
+    user_agent_string = models.CharField(max_length=255, null=True, blank=True)
+    comment = models.CharField(max_length=255, null=True, blank=True)
 
+    #algorithm??
     #Format (pkcs10, 12, 7...)
 
     objects = ActiveCertManager()

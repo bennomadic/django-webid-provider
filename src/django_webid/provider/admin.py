@@ -44,7 +44,9 @@ class CertAdmin(admin.ModelAdmin):
     """
     Admin class for Cert model.
     """
-    readonly_fields = ( 'fingerprint_sha1',
+    readonly_fields = ( 'user_agent_string',
+                        'fingerprint_sha256',
+                        'fingerprint_sha1',
                         'fingerprint_md5')
 
 class PubKeyAdmin(admin.ModelAdmin):
