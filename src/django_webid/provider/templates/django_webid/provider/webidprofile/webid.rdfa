@@ -8,14 +8,12 @@
       xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
 <head>
 <meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8" />
-<title>webid for {{ webiduser.username }}</title>
-<link rel="openid.server" href="http://openid4.me/index.php" />
-<link rel="openid2.provider" href="http://openid4.me/index.php"/>
+<title>WebID profile for {{ webiduser.username }}</title>
 {# CAN WE LINK SOMEHOW TO THE RDF+XML VERSION??? #}
 {# sure... link-rel #}
 {# but we should have here some content-negociation in place :) #}
 </head>
-<body typeof="foaf:PersonalProfileDocument" about="#">
+<body typeof="foaf:PersonalProfileDocument" about="{{ webiduser.absolute_webid_uri }}">
 <!-- WebID HTML snippet. The xmlns declarations above can be moved into the div below if needed-->
 <div about="#me" typeof="foaf:Person">
   <span property="foaf:name">{{ webiduser.username }}</span>

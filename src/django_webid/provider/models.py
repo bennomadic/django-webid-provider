@@ -239,7 +239,6 @@ class WebIDUser(User):
         #webid.auth module does not.
 
         #XXX document that we NEED TO HAVE SITES APP WORKING.
-        #XXX Putting here the "me"
         #XXX get a setting for this?
 
         uri = "http://%s%s#me" % (
@@ -251,7 +250,7 @@ class WebIDUser(User):
 
     @property
     def keys(self):
-        #XXX filter active???
+        #only active keys (keys have overriden manager)
         return self.pubkey_set.all()
 
     def __unicode__(self):

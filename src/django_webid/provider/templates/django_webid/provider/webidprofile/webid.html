@@ -1,5 +1,13 @@
 <html>
-	<body>
-		<h1>This is a html template</h2>
-	</body>
+<head>
+{% comment %}
+alternate links have the href hardcoded here,
+so it's tied to username resource type of uri
+{% endcomment %}
+<link rel="alternate" type="application/rdf+xml" href="{{ webiduser.username }}#me?format=rdf"/>
+<link rel="alternate" type="text/turtle" href="{{ webiduser.username }}#me?format=turtle"/>
+<body>
+<h1>WebID profile</h1>
+</body>
+</head> 
 </html>

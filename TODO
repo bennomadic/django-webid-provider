@@ -24,4 +24,5 @@ https://github.com/LangaCore/kitdjango/blob/master/src/lck/django/namespace_pack
 
 Extra features:
 - Confirm email: integration with django-email-confirm (or something like that)
-- pkcs12 fallback (more insecure)
+- django-registration
+- pkcs12 fallback (more insecure: for iphones et al...)

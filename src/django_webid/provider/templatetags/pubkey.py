@@ -28,6 +28,16 @@ PUBKEY_SNIPPET_RDFA = u"""
     </div>
 </div>
 """
+PUBKEY_SNIPPET_RDFXML = u"""
+    <cert:key>
+      <cert:RSAPublicKey>
+        <rdfs:label>made on [...] on my laptop</rdfs:label>
+        <cert:modulus rdf:datatype="http://www.w3.org/2001/XMLSchema#hexBinary">
+        %(mod)s
+        </cert:modulus>
+        <cert:exponent rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">%(exp)s</cert:exponent>
+      </cert:RSAPublicKey>
+    </cert:key>"""
 
 PUBKEY_SNIPPET_TURTLE = u"""
   :key [ a :RSAPublicKey;
@@ -86,7 +96,12 @@ class PubKeyRDFNode(template.Node):
                         }
                 return r
             if self._format == "rdfxml":
-                return 'FORMAT NOT IMPLEMENTED'
+                r = ""
+                for pk in uu.keys:
+                    r = r + PUBKEY_SNIPPET_RDFXML % {'mod':pk.mod,
+                        'exp':pk.exp,
+                        }
+                return r
             raise template.TemplateSyntaxError("format should be one of the following: 'rdfa', 'rdfxml'")
         except template.VariableDoesNotExist:
             return ''
