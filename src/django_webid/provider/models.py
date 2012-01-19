@@ -25,7 +25,7 @@ class CertConfig(models.Model):
 
     #Defaults for App Behavior
     hide_keygen_form = models.BooleanField(default=False,
-            help_text="WebID Certificate Add Page will hide keygen \
+    help_text="WebID Certificate Add Page will hide keygen \
 details from user, giving the impression of an automatic certificate \
 installation")
 
@@ -167,6 +167,12 @@ class ActiveCertManager(models.Manager):
 
 
 class Cert(models.Model):
+    """
+    Class for storing certificate info.
+    """
+    #XXX we can also store here info from visiting Users.
+    #So we check certstr on auth.
+    #created_by_us = False
 
     pubkey = models.OneToOneField(PubKey)
 
@@ -205,22 +211,30 @@ class Cert(models.Model):
                 self.fingerprint_sha1)
 
 
-class URIUser(User):
+class WebIDURI(models.Model):
     """
-    We NEED to store the URI for WebIDUsers.
-    Sotring it in the profile
+    This class stores the URI for WebIDUsers.
+    (The URI where we retrieved the WebIDProfile for
+    external users; the URI that we have assigned
+    thru a callback on hosted users.
+    It can be accessed through WebIDUser proxy model.
     """
     uri = models.URLField(null=True, blank=True)
+    user = models.ForeignKey(User, unique=True)
     #External/Internal (hosted) webid users.
     _is_user_hosted_here = models.BooleanField()
     #@property internal_user / external_user
+    #We can still add some fields (here?)
+    #related to the de-referenced uri
+    #i.e., timestamp of profile fetching, content-type, ...
+    #that can help to the periodical re-fetching.
 
     class Meta:
         #app_label = "django_webid_provider"
-        db_table = "webid_provider_uriuser"
+        db_table = "webid_provider_webiduri"
 
 
-class WebIDUser(URIUser):
+class WebIDUser(User):
     """
     Proxy model for accessing WebIDUsers.
     Implements methods for filtering own/external users, and
@@ -249,6 +263,7 @@ class WebIDUser(URIUser):
                 kwargs={'username': self.username})
 
     webid_url = property(_get_webid_url)
+    #XXX in the property, need to hook a configurable callback.
     #XXX should raise exception on _set,
     #or use proper fields.
 
@@ -274,6 +289,15 @@ class WebIDUser(URIUser):
     def keys(self):
         #only active keys (keys have overriden manager)
         return self.pubkey_set.all()
+
+    @property
+    def uri(self):
+        """
+        property that retrieves the webiduri object
+        via FK.
+        """
+        #XXX we MUST hook here a possible callback to retrieve uris.
+        return self.webiduri_set.all()[0]
 
     def __unicode__(self):
         return self.username
