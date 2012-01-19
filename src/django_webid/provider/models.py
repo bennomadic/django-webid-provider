@@ -1,15 +1,16 @@
 from django.db import models
-from django.db.models import signals
 
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 
 from django.core.urlresolvers import reverse
-from django.utils.translation import gettext as _
+#from django.utils.translation import gettext as _
+
 
 class SingletonManager(models.Manager):
     def single(self):
         return self.all()[0]
+
 
 class CertConfig(models.Model):
     """
@@ -24,9 +25,9 @@ class CertConfig(models.Model):
 
     #Defaults for App Behavior
     hide_keygen_form = models.BooleanField(default=False,
-            help_text="WebID Certificate Add Page will hide keygen details from\
-            user, giving the impression of an automatic certificate\
-            installation")
+            help_text="WebID Certificate Add Page will hide keygen \
+details from user, giving the impression of an automatic certificate \
+installation")
 
     #Defaults for subject
 
@@ -62,7 +63,6 @@ class CertConfig(models.Model):
     valid_from_days = models.IntegerField(help_text="How many days, starting\
         with the cert creation, until the certificate is active")
 
-
     def get_subject_data(self):
         """
         helper methods for certificate creation.
@@ -85,8 +85,8 @@ class CertConfig(models.Model):
         return self.common_name_field
 
     def get_validity(self):
-        data = { "for_days": self.valid_for_days,
-                 "from_days": self.valid_from_days}
+        data = {"for_days": self.valid_for_days,
+                "from_days": self.valid_from_days}
         return data
 
     #currently using a hack: see Admin no-add/no-edit restriction
@@ -113,12 +113,13 @@ class ActivePubKeyManager(models.Manager):
         return super(ActivePubKeyManager,
                 self).get_query_set().filter(is_active=True)
 
+
 class PubKey(models.Model):
     #XXX in admin, should use inline
     #for viewing the cert at the same time.
 
-    mod  = models.CharField(max_length=10000)
-    exp  = models.IntegerField()
+    mod = models.CharField(max_length=10000)
+    exp = models.IntegerField()
     bits = models.IntegerField()
 
     #choices?
@@ -154,6 +155,7 @@ class PubKey(models.Model):
         verbose_name_plural = "Public Keys"
         db_table = "webid_provider_pubkey"
 
+
 class ActiveCertManager(models.Manager):
     """
     default manager for Certs. returns only
@@ -162,6 +164,7 @@ class ActiveCertManager(models.Manager):
     def get_query_set(self):
         return super(ActiveCertManager,
                 self).get_query_set().filter(pubkey__is_active=True)
+
 
 class Cert(models.Model):
 
@@ -178,7 +181,6 @@ class Cert(models.Model):
     fingerprint_sha256 = models.CharField(max_length=95)
     fingerprint_sha1 = models.CharField(max_length=60)
     fingerprint_md5 = models.CharField(max_length=50)
-
 
     #It can help the user to recognize
     #in which browser was installed...
@@ -203,7 +205,27 @@ class Cert(models.Model):
                 self.fingerprint_sha1)
 
 
-class WebIDUser(User):
+class URIUser(User):
+    """
+    We NEED to store the URI for WebIDUsers.
+    Sotring it in the profile
+    """
+    uri = models.URLField(null=True, blank=True)
+    #External/Internal (hosted) webid users.
+    _is_user_hosted_here = models.BooleanField()
+    #@property internal_user / external_user
+
+    class Meta:
+        #app_label = "django_webid_provider"
+        db_table = "webid_provider_uriuser"
+
+
+class WebIDUser(URIUser):
+    """
+    Proxy model for accessing WebIDUsers.
+    Implements methods for filtering own/external users, and
+    retrieving the absolute WebID URI.
+    """
 
     class Meta:
         proxy = True
@@ -272,13 +294,10 @@ class WebIDProfile(models.Model):
     #property of WebIDUser
 
     #XXX Move this to WebIDUser ^^^
-    uri = models.URLField()
+    #uri = models.URLField()
     user = models.OneToOneField(WebIDUser)
 
     #XXX move this to WebIDUser ^^^
-    #External/Internal (hosted) webid users.
-    _is_user_hosted_here = models.BooleanField()
-    #@property internal_user / external_user
 
     class Meta:
         abstract = True
