@@ -36,23 +36,23 @@ setup(
 a WebID provider""",
     long_description=long_description,
     author='Ben Carrillo',
-    author_email='bennomadic at gmail dot com',
-    #
-    download_url='https://github.com/bennomadic/django-webid-provider.git',
-    #url=...
+    author_email='bennomadic@gmail.com',
+    download_url='https://github.com/bennomadic/django-webid-provider/tarball/v0.1',
+    url="https://github.com/bennomadic/django-webid-provider",
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: GPL License',
+        'License :: OSI Approved :: GNU General Public License (GPL)',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: JavaScript',
         'Framework :: Django',
         "Topic :: Internet :: WWW/HTTP",
         "Topic :: Software Development :: Libraries :: Python Modules",
+        "Topic :: Security :: Cryptography",
     ],
-    keywords='foaf, ssl, webid, x509, certificate, client certificate, authentication, authorization,django',
+    keywords='foaf, ssl, webid, x509, certificate, client certificate,\
+authentication, authorization,django',
     zip_safe=False,
 )
-
