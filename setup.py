@@ -17,27 +17,23 @@ VERSION = __version__
 setup_root = os.path.dirname(__file__)
 sys.path.insert(0, os.path.join(setup_root, "src"))
 
-def read(*path):
-    return open(os.path.join(os.path.abspath(setup_root), *path)).read()
+long_description = "A reusable django app that turns any django-powered\
+site into a WebID provider""",
 
-#XXX FIXME description!
-long_description="..."
-
-
-packages=find_packages('src')
+packages = find_packages('src')
 print 'packages', packages
 setup(
     name='django_webid.provider',
-    package_dir = {'':'src'},
+    package_dir={'': 'src'},
     packages=packages,
-    namespace_packages = ['django_webid'],
+    namespace_packages=['django_webid'],
     include_package_data=True,
     exclude_package_data={
         'requirements': ['%s/*.tar.gz' % VERSION],
     },
     version=VERSION,
-    description='Django app for creating certs and profiles for WebID authentication.',
-    #long_description=read('docs', 'intro.txt'),
+    description="A reusable django app that turns any django-powered site into\
+a WebID provider""",
     long_description=long_description,
     author='Ben Carrillo',
     author_email='bennomadic at gmail dot com',
