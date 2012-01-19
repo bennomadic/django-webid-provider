@@ -21,7 +21,7 @@ def init():
     #local("pip install -E . -r examples/example_webid_provider/requirements/libs.txt")
     local("pip install -E . -r examples/example_webid_provider/requirements/external_apps.txt")
     local("python setup.py sdist")
-    local("pip install -E . dist/django_webid.provider-0.1.tar.gz")
+    local("pip install -E . dist/django-webid-provider-0.1.tar.gz")
     print(green("[OK] env has been initializated"))
 
 def rebuild():
@@ -30,7 +30,7 @@ def rebuild():
     """
     local("rm -rf dist/")
     local("python setup.py sdist")
-    local("pip install -E . -I -U dist/django_webid.provider-0.1.tar.gz")
+    local("pip install -E . -I -U dist/django-webid-provider-0.1.tar.gz")
     print(green("[OK] env has been rebuilt"))
 
 def clean():
