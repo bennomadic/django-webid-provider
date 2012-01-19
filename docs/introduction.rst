@@ -41,7 +41,8 @@ You can download this project in either
  * `tar`_ formats.
  
 You can also clone the project with `Git`_ by running::
-    $ git clone git://github.com/bennomadic/django-webid-profile
+
+    $ git clone git://github.com/bennomadic/django-webid-provider
 
 Bugs and features
 =================
@@ -49,7 +50,12 @@ Bugs and features
 
 License
 =======
-django-webid-provider is copyright 2011 by [...] and is covered by the `GPLv3`_
+django-webid-provider is copyright 2012 by Cooperative Quinode and is covered by the `GPLv3`_
+
+Authors
+=======
+Julia Anaya, 
+Ben Carrillo
 
 Contact
 ========
@@ -59,18 +65,14 @@ Acknowledgments
 ================
 `foaf-protocols`_ community 
 
-
-
-
 .. _WebID: http://www.w3.org/2005/Incubator/webid/spec/
 .. _SPARQL: http://www.w3.org/TR/rdf-sparql-query/
 .. _FOAF: http://xmlns.com/foaf/spec/
 .. _Django: http://djangoproject.com/
-.. _zip: http://github.com/xmppwebid/xmppwebid/zipball/master
-.. _tar: http://github.com/xmppwebid/xmppwebid/tarball/master
+.. _zip: http://github.com/bennomadic/django-webid-provider/zipball/master
+.. _tar: http://github.com/bennomadic/django-webid-provider/tarball/master
 .. _Git: http://git-scm.com
 .. _GPLv3: http://www.gnu.org/licenses/gpl-3.0.html
-.. _In-Band-Registration: http://xmpp.org/extensions/xep-0077.html
 .. _TLS: http://tools.ietf.org/html/rfc5246
 .. _Certificate: http://www.w3.org/ns/auth/cert
 .. _RSA:  http://www.w3.org/ns/auth/rs
