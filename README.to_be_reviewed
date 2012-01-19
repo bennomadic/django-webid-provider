@@ -1,5 +1,0 @@
-Django Identity Provider for the WebID protocol
-
-
-Depends:
-	django-uni-form *(??)* may change
