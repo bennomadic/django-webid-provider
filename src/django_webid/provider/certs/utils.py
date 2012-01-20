@@ -11,11 +11,14 @@ import M2Crypto as m2crypto
 #Hopefully, Santa bring us an improved m2crypto API
 #since we've been good people...
 
+
 class CertificateCreationError(Exception):
     pass
 
+
 class CertOptions(object):
     pass
+
 
 class CertCreator(object):
     """
