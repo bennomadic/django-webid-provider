@@ -220,7 +220,8 @@ class WebIDURI(models.Model):
     It can be accessed through WebIDUser proxy model.
     """
     uri = models.URLField(null=True, blank=True)
-    user = models.ForeignKey(User, unique=True)
+    user = models.ForeignKey(User, unique=True,
+            related_name="stored_webiduris")
     #External/Internal (hosted) webid users.
     _is_user_hosted_here = models.BooleanField()
     #@property internal_user / external_user
@@ -252,6 +253,13 @@ class WebIDUser(User):
     @staticmethod
     def get_for_user(user):
         return WebIDUser.objects.get(id=user.id)
+
+    @staticmethod
+    def get_for_uri(uri):
+        try:
+            return WebIDUser.objects.get(stored_webiduris__uri=uri)
+        except WebIDUser.DoesNotExist:
+            return None
 
     def _get_webid_url(self):
         #XXX FIXME
@@ -290,14 +298,17 @@ class WebIDUser(User):
         #only active keys (keys have overriden manager)
         return self.pubkey_set.all()
 
-    @property
-    def uri(self):
+    def _get_uri(self):
         """
         property that retrieves the webiduri object
         via FK.
         """
         #XXX we MUST hook here a possible callback to retrieve uris.
-        return self.webiduri_set.all()[0]
+        uris = self.stored_webiduris.all()
+        if uris.count() > 0:
+            return uris[0]
+    #XXX this is confusing with the webid_url and absoulte_webid_uri above!!!
+    storeduri = property(_get_uri)
 
     def __unicode__(self):
         return self.username
