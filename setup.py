@@ -17,8 +17,7 @@ VERSION = __version__
 setup_root = os.path.dirname(__file__)
 sys.path.insert(0, os.path.join(setup_root, "src"))
 
-long_description = "A reusable django app that turns any django-powered \
-site into a WebID provider"""
+long_description = """A reusable django app that turns any django-powered site into a WebID provider"""
 
 packages = find_packages('src')
 print 'packages', packages
