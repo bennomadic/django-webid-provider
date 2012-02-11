@@ -8,6 +8,9 @@
 
 {% block extra_head %}
 <script type="text/javascript" src="{{ MEDIA_URL }}django_webid/provider/js/jquery-1.7.min.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}django_webid/provider/js/jquery-ui-1.8.17.custom.min.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}django_webid/provider/js/jquery.browser.min.js"></script>
+<link rel="stylesheet" href="{{ MEDIA_URL }}django_webid/provider/js/css/ui-lightness/jquery-ui-1.8.17.custom.css" type="text/css" media="all" />
 <!--[if IE]>
   <script type="text/javascript" src="{{ MEDIA_URL }}django_webid/provider/js/explorer-keygen.js"></script>
 <![endif]-->
@@ -23,23 +26,23 @@
     </ul>
 {% endif %}
 
+<style>
+#dialog {
+	display:hidden !important;
+}
+
+</style>
 
 <script type="text/javascript">
 
-	{% comment %}
-	we probably should disable button after 1st click
-	and in Chrome we should notify the user somehow
-	so she knows we're creating her cert...
-	it's silly, but nothing happens in the current Chrome...
-	{% endcomment %}
 	(function($) {
 	    $(document).ready(function($) {
 		    	{% comment %}
-			first "automated cert installation" attempt
 			var HIDE_KEYGEN_FORM should be passed from view (certconfig opt)
 			XXX should try with iframe also, this is a bit
 			buggy when page loads slowly.
 			{% endcomment %}
+			$('#dialog').hide();
 			{% if HIDE_KEYGEN_FORM %}
 			$('#webid-block').hide();
 			$('#autowebidinstall').click( function(event) {
@@ -47,9 +50,51 @@
 				$('#webid-keygen').click();
 				});
 			{% endif %}
-		        });
-			})($);
+//XXX DETECT CHROME and trigger dialog
+{% comment %}
+Workaround for Chromium Issue #52949: Keygen should occur asynchronously and display UI feedback
+http://code.google.com/p/chromium/issues/detail?can=2&q=52949&colspec=ID%20Pri%20Mstone%20ReleaseBlock%20Area%20Feature%20Status%20Owner%20Summary&id=52949
+... and we disable button after 1st click.
+//XXX TODO: disable also the hover effect.
+ugh... the UI is frozen, so the img does not "move"... ugliness everywhere...
+{% endcomment %}
+			$("#webid-keygen").click( function(e) {
+				console.debug('keygen button pressed');
+				if($(this).hasClass('sent')){
+					e.preventDefault();
+					return false;
+				}
+				if($(this).hasClass('prevented')){
+					console.debug('prevented');
+					e.preventDefault();
+					{% comment %}
+					//XXX show only if Chromium.
+
+					{% endcomment %}
+					if($.browser.name === "chrome") {
+						$("#dialog").dialog();
+						//XXX modal breaks interaction?
+						//$("#dialog").dialog({modal:true});
+					}
+					$(this).removeClass('prevented');
+					setTimeout(function() {
+						$("#webid-keygen").click();
+						console.debug('clicking on submit again');
+						}, 10); 
+				}else{
+					console.debug('triggering and preventing...');
+					$(this).addClass('prevented');
+					$(this).addClass('sent');
+				}
+			});
+	    });
+	})($);
 </script>
+<div id="dialog" title="Key Generation in Progress...">
+<p>{% trans "This may take some minutes. Please wait..." %}</p>
+<img src="{{ MEDIA_URL }}django_webid/provider/img/ajax-loader.gif"/>
+</div>
+
 
 <div class="middle_panel" id="webid-block">
 
@@ -65,8 +110,8 @@
             <fieldset class="inlineLabels">
                 <div class="form_block">
                     <input type="hidden" name="action" value="keygen" />
-		    <keygen name="pubkey" challenge="{{ challenge }}">
-                    <input type="submit" value="{% trans "Give me a cert!" %}" name="keygen" id="webid-keygen"/>
+		    <keygen name="pubkey" challenge="{{ challenge }}" id="webid-keygentag">
+                    <input type="submit" class="prevented" value="{% trans "Give me a cert!" %}" name="keygen" id="webid-keygen"/>
                 </div>
             </fieldset>
         </form>
