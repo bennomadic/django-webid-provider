@@ -43,8 +43,8 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response, redirect,\
         get_object_or_404
 from django.template import RequestContext
-from django.utils.translation import ugettext_lazy as _
-from django.views.decorators.csrf import csrf_protect
+#from django.utils.translation import ugettext_lazy as _
+#from django.views.decorators.csrf import csrf_protect
 from django.views.generic import list_detail
 from django.conf import settings
 from django.db import models
@@ -277,6 +277,7 @@ def add_cert_to_user(request):
                 # works on FF, opera. Not working in chrome
                 #Iframe use like this:
                 #http://blog.magicaltux.net/2009/02/09/using-ssl-keys-for-client-authentification/
+                #XXX what about MSIE??
 
                 certdump = c.get_b64_cert_dump()
                 sha1fingerprint = c.get_sha1_fingerprint()
@@ -292,13 +293,22 @@ def add_cert_to_user(request):
                             "user": request.user,
                             }, context_instance=RequestContext(request))
 
-            if do_multipart:
+            elif do_multipart:
                 # As a workaround for iframes, experimenting with multipart
                 # black magic
                 # XXX Here Be Dragons
                 # chrome also misbehaves with this :(
                 certdump = c.get_cert_dump()
-                #r = HttpResponse(mimetype="application/x-x509-user-cert")
+                sha1fingerprint = c.get_sha1_fingerprint()
+                t = template.loader.get_template(
+                        'django_webid/provider/webid_cert_postinst.html')
+                c = template.Context({
+                            "MEDIA_URL": settings.MEDIA_URL,
+                            "STATIC_URL": settings.STATIC_URL,
+                            "sha1fingerprint": sha1fingerprint,
+                            "user": request.user,
+                            })
+                rendered = t.render(c)
                 BOUND = "BOUND"
                 r = HttpResponse(
                         mimetype="multipart/x-mixed-replace;boundary=%s" % BOUND)
@@ -309,11 +319,12 @@ def add_cert_to_user(request):
                 r.write(BOUND + N + 'Content-Type: application/x-x509-user-cert' + NN)
                 r.write(certdump)
                 r.write(N + "--" + BOUND + N + 'Content-Type: text/html' + NN)
-                r.write("<html><body><h1>hello world! did you see my cert???</h1></body></html>")
+                #r.write("<html><body><h1>hello world! did you see my cert???</h1></body></html>")
+                r.write(rendered)
                 r.write(N + "--" + BOUND + "--")
                 return r
 
-            if not do_iframe:
+            else:
                 # We deliver the cert as the only response
                 certdump = c.get_cert_dump()
                 r = HttpResponse(mimetype="application/x-x509-user-cert")

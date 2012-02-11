@@ -1,0 +1,39 @@
+{% extends "django_webid/provider/base.html" %}
+
+{% load i18n %}
+{% load uni_form_tags %}
+
+
+{% block head_title %}{% blocktrans %}WebID Cert Installation{% endblocktrans %}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block body %}
+
+{% if messages %}
+    <ul id="messages">
+        {% for message in messages %}
+        <li id="message_{{ forloop.counter }}">{{message}}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<div class="middle_panel">
+    <h1>Your cert has been installed</h1>
+    <p>A certificate with sha-1 fingerprint <b>{{sha1fingerprint}}</b> has just been installed in your browser.</p>
+    <p class="error">(Or, at least, it <em>should</em> have been installed. Check it, we're in alpha yet)...<br/> How can I check? (here goes link to browser-dependant manual verification)</p>
+    <p>It is pointing to <a href="{% url webidprovider-webid_uri username=user.username %}">your WebID URI</a>, and from now on you can use it to login in any WebID-enabled site.</p>
+    <p>Have fun!</p>
+    {% comment %}
+    TODO 
+    1) Ask user to add name to the cert (to be displayed on certs list, so it can be recognized)
+    {% endcomment %}
+    <h2><a href="{% url webidprovider-cert_list %}">Back to your WebID certificates list</a></h2>
+</div>
+
+{% endblock %}
+
+{% block extra_body %}
+{% endblock %}
+
