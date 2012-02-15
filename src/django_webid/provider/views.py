@@ -334,7 +334,10 @@ def add_cert_to_user(request):
                 r.write(certdump)
                 session = request.session
                 session['certdelivered'] = True
-                session['sha1fingerprint'] = c.get_sha1_fingerprint()
+                sha1 = c.get_sha1_fingerprint()
+                session['sha1fingerprint'] = sha1
+                cert = Cert.objects.get(fingerprint_sha1=sha1)
+                session['cert_id'] = cert.id
                 return r
 
     app_conf = CertConfig.objects.single()
@@ -368,6 +371,29 @@ def check_cert_was_delivered(request):
         dlvrd = request.session.get('certdelivered', False)
         return HttpResponse(
                 json.dumps({'certdelivered': dlvrd}),
+                "application/javascript")
+    else:
+        return HttpResponse(status=400)
+
+
+def cert_nameit(request):
+    """
+    ajax view that puts a comment on a new cert.
+    """
+    if request.is_ajax() and request.method == "POST":
+        comment = request.POST.get('certname', None)
+        cert_id = request.session.get('cert_id', None)
+        res = False
+        if cert_id and comment:
+            cert_inst = Cert.objects.get(id=cert_id)
+            if cert_inst:
+                cert_inst.comment = comment
+                cert_inst.save()
+                res = True
+        return HttpResponse(
+                json.dumps({'named': res,
+                    'id': cert_id,
+                    'comment': comment}),
                 "application/javascript")
     else:
         return HttpResponse(status=400)

@@ -34,6 +34,8 @@ urlpatterns = patterns('',
     #ajax utility views
     url(r'^ajax/checkcertdlvrd', views.check_cert_was_delivered,
         name='webidprovider-checkcertdlvrd'),
+    url(r'^ajax/certnameit', views.cert_nameit,
+        name='webidprovider-nameit'),
 
 
     #WebID Profile / Foaf publishing...
