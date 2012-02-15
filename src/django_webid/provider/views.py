@@ -29,15 +29,14 @@
     :TODO:
 """
 import hashlib
+import json
 import logging
 import os
 import random
 import re
-
 #from datetime import datetime
 
 from django import template
-
 from django.contrib.auth import logout
 from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response, redirect,\
@@ -49,7 +48,6 @@ from django.views.generic import list_detail
 from django.conf import settings
 from django.db import models
 
-
 #XXX this import should be handled on certs.utils now
 from OpenSSL import crypto
 
@@ -59,14 +57,13 @@ from .models import WebIDUser, CertConfig, Cert
 #from .certs.utils import create_cert # deprecated
 from .certs.utils import CertCreator
 
-
 #XXX PKCS12 SHIT
 #... that we could shut down by the moment...
-from .certs.utils import gen_httpwebid_selfsigned_cert_pemfile, pemfile_2_pkcs12file
+from .certs.utils import gen_httpwebid_selfsigned_cert_pemfile,\
+        pemfile_2_pkcs12file
 from .forms import WebIdIdentityForm
 
-
-from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import login as auth_login  # authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -75,19 +72,13 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 
-
-
 #############################################################
 # VIEWS BEGIN
 #############################################################
-
-
 ################
 # CREATE USER
 ################
-
 #XXX we should hook django register app here, instead of this
-
 def create_user(request):
     """
     creates user and redirects to the page
@@ -124,8 +115,8 @@ def create_user(request):
 
                 return redirect('webidprovider-add_cert')
 
-
-            return render_to_response('django_webid/provider/create_user.html', {
+            return render_to_response(
+                'django_webid/provider/create_user.html', {
                 'form': form,
                 "MEDIA_URL": settings.MEDIA_URL,
                 "STATIC_URL": settings.STATIC_URL,
@@ -159,6 +150,8 @@ def logout_view(request):
 #####################
 # CERT:LIST
 #####################
+
+
 @login_required
 def cert_list_by_user(request):
     try:
@@ -169,8 +162,8 @@ def cert_list_by_user(request):
     # Use the object_list view for the heavy lifting.
     return list_detail.object_list(
         request,
-        queryset = certs,
-        template_name = "django_webid/provider/cert_list.html",
+        queryset=certs,
+        template_name="django_webid/provider/cert_list.html",
         #XXX not working with template object name??
         #template_object_name = "certs",
     )
@@ -178,6 +171,8 @@ def cert_list_by_user(request):
 #####################
 # CERT:DETAIL
 #####################
+
+
 @login_required
 def cert_detail(request, cert_id):
     # Look up the Cert (and raise a 404 if she's not found)
@@ -188,17 +183,20 @@ def cert_detail(request, cert_id):
     # Show the detail page
     return list_detail.object_detail(
         request,
-        queryset = Cert.objects.all(),
-        object_id = cert_id,
-        template_name = "django_webid/provider/cert_detail.html"
+        queryset=Cert.objects.all(),
+        object_id=cert_id,
+        template_name="django_webid/provider/cert_detail.html"
     )
 
 #####################
 # CERT:REVOKE
 #####################
+
+
 def revoke_cert(cert):
     cert.pubkey.is_active = False
     cert.pubkey.save()
+
 
 @login_required
 def cert_revoke(request, cert_id):
@@ -208,11 +206,12 @@ def cert_revoke(request, cert_id):
         raise Http404
 
     if request.method == "POST":
-        hidden  = request.POST.get('post', None)
+        hidden = request.POST.get('post', None)
         if hidden and hidden == "yes":
             revoke_cert(cert)
             #XXX we should use messages here.
-            return render_to_response('django_webid/provider/cert_revoked.html',
+            return render_to_response(
+                'django_webid/provider/cert_revoked.html',
                 {
                     "MEDIA_URL": settings.MEDIA_URL,
                     "STATIC_URL": settings.STATIC_URL,
@@ -222,14 +221,16 @@ def cert_revoke(request, cert_id):
         # with a confirmation message.
         return list_detail.object_detail(
             request,
-            queryset = Cert.objects.all(),
-            object_id = cert_id,
-            template_name = "django_webid/provider/cert_revoke.html"
+            queryset=Cert.objects.all(),
+            object_id=cert_id,
+            template_name="django_webid/provider/cert_revoke.html"
         )
 
 #####################
 # CERT:ADD
 #####################
+
+
 @login_required
 #XXX doubt... will this decorator work also for webid-auth?
 # not logged in, it should check if anon register is allowed
@@ -239,7 +240,7 @@ def cert_revoke(request, cert_id):
 def add_cert_to_user(request):
     messages = []
     if request.method == 'POST':
-        if request.POST.has_key('pubkey'):
+        if 'pubkey' in request.POST:
             user = request.user
             spkac_str = str(request.POST['pubkey'])
 
@@ -256,7 +257,7 @@ def add_cert_to_user(request):
                 do_multipart = False
 
             skip_issuer_signing = request.REQUEST.get('skipsign', False)
-            if skip_issuer_signing and skip_issuer_signing=="true":
+            if skip_issuer_signing and skip_issuer_signing == "true":
                 skip_sign = True
             else:
                 skip_sign = False
@@ -271,17 +272,17 @@ def add_cert_to_user(request):
             c = CertCreator(spkac_str, user, **kwargs)
             c.create_cert()
 
-
             if do_iframe:
                 # We create an iframe with b64encoded cert as src.
                 # works on FF, opera. Not working in chrome
+                #http://code.google.com/p/chromium/issues/detail?id=114142
                 #Iframe use like this:
-                #http://blog.magicaltux.net/2009/02/09/using-ssl-keys-for-client-authentification/
+                #http://blog.magicaltux.net/2009/02/09/
+                #using-ssl-keys-for-client-authentification/
                 #XXX what about MSIE??
 
                 certdump = c.get_b64_cert_dump()
                 sha1fingerprint = c.get_sha1_fingerprint()
-
 
                 return render_to_response(
                         'django_webid/provider/webid_b64_cert.html',
@@ -298,6 +299,7 @@ def add_cert_to_user(request):
                 # black magic
                 # XXX Here Be Dragons
                 # chrome also misbehaves with this :(
+                #http://code.google.com/p/chromium/issues/detail?id=114140
                 certdump = c.get_cert_dump()
                 sha1fingerprint = c.get_sha1_fingerprint()
                 t = template.loader.get_template(
@@ -311,15 +313,16 @@ def add_cert_to_user(request):
                 rendered = t.render(c)
                 BOUND = "BOUND"
                 r = HttpResponse(
-                        mimetype="multipart/x-mixed-replace;boundary=%s" % BOUND)
+                        mimetype="multipart/x-mixed-replace;boundary=%s" % \
+                                BOUND)
 
                 N = "\r\n"
                 NN = "\r\n\n"
 
-                r.write(BOUND + N + 'Content-Type: application/x-x509-user-cert' + NN)
+                r.write("--" + BOUND + N +
+                        'Content-Type: application/x-x509-user-cert' + NN)
                 r.write(certdump)
                 r.write(N + "--" + BOUND + N + 'Content-Type: text/html' + NN)
-                #r.write("<html><body><h1>hello world! did you see my cert???</h1></body></html>")
                 r.write(rendered)
                 r.write(N + "--" + BOUND + "--")
                 return r
@@ -329,9 +332,10 @@ def add_cert_to_user(request):
                 certdump = c.get_cert_dump()
                 r = HttpResponse(mimetype="application/x-x509-user-cert")
                 r.write(certdump)
+                session = request.session
+                session['certdelivered'] = True
+                session['sha1fingerprint'] = c.get_sha1_fingerprint()
                 return r
-
-
 
     app_conf = CertConfig.objects.single()
     r = random.getrandbits(100)
@@ -345,8 +349,36 @@ def add_cert_to_user(request):
         "STATIC_URL": settings.STATIC_URL,
         "challenge": challenge,
         'messages': messages,
-        'user':request.user},
+        'user': request.user},
         context_instance=RequestContext(request))
+
+
+def check_cert_was_delivered(request):
+    """
+    ajax view that returns certdelivered value from session
+    or False if key is not found.
+    """
+    #XXX is there a decorator for this?
+    if request.is_ajax():
+        dlvrd = request.session.get('certdelivered', False)
+        return HttpResponse(
+                json.dumps({'certdelivered': dlvrd}),
+                "application/javascript")
+    else:
+        return HttpResponse(status=400)
+
+
+def cert_post_inst(request):
+    return render_to_response(
+            'django_webid/provider/webid_cert_postinst.html',
+            {
+                "MEDIA_URL": settings.MEDIA_URL,
+                "STATIC_URL": settings.STATIC_URL,
+                "sha1fingerprint": request.session.get(
+                    'sha1fingerprint', None),
+                "user": request.user,
+                }, context_instance=RequestContext(request))
+
 
 
 ###########################################
@@ -365,10 +397,6 @@ def render_webid(request, username=None):
              "STATIC_URL": settings.STATIC_URL,
              })
              #, context_instance=RequestContext(request))
-
-
-
-
 
 
 ###################################################
@@ -453,7 +481,6 @@ def webid_identity_keygen(request):
     }, context_instance=RequestContext(request))
 
 
-
 def webid_identity(request):
     """
     Create only http-WebID certificate
@@ -521,14 +548,9 @@ def webid_identity(request):
     }, context_instance=RequestContext(request))
 
 
-
-
-
 ###########################################
 #            SIGNALS                      #
 ###########################################
-
-
 @receiver(post_save, sender=User)
 def init_blank_profile_for_new_user(sender, **kwargs):
     """
