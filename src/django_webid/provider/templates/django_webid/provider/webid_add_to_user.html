@@ -51,6 +51,22 @@
 				$('#webid-keygen').click();
 				});
 			{% endif %}
+
+			{% if numpubkeys > 0 %}
+			$("#dialog-newcert").dialog({
+				modal: true,
+				buttons: {
+				  Yes: function() {
+				    //console.debug('yes please')
+				    $(this).dialog("close");
+				    },
+				  No: function() {
+				    window.location = "{% url webidprovider-cert_list %}";
+				    //console.debug('no thanks')
+				    }
+				}
+			});
+			{% endif %}
 			
 {% comment %}
 
@@ -140,6 +156,10 @@ function postCertCountdown(interval, selector) {
 <div id="dialog-continue" title="Certificate Installed">
 <p><span class="ui-icon ui-icon-circle-check" style="float:left;"></span>
 {% trans "Your certificate has been installed." %}</p>
+</div>
+
+<div id="dialog-newcert" title="Create a new cert?">
+{% trans "It looks like you already have created some other cert. Do you really want to create a new one?" %}</p>
 </div>
 
 

@@ -341,6 +341,10 @@ def add_cert_to_user(request):
     r = random.getrandbits(100)
     challenge = hashlib.sha1(str(r)).hexdigest()
 
+    user = request.user
+    webiduser = WebIDUser.get_for_user(user)
+    numpubkeys = webiduser.pubkey_set.count()
+
     return render_to_response('django_webid/provider/webid_add_to_user.html',
         {
         "HIDE_KEYGEN_FORM": app_conf.hide_keygen_form,
@@ -349,7 +353,8 @@ def add_cert_to_user(request):
         "STATIC_URL": settings.STATIC_URL,
         "challenge": challenge,
         'messages': messages,
-        'user': request.user},
+        'user': request.user,
+        'numpubkeys': numpubkeys},
         context_instance=RequestContext(request))
 
 
