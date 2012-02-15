@@ -155,7 +155,8 @@ def logout_view(request):
 @login_required
 def cert_list_by_user(request):
     try:
-        certs = Cert.objects.filter(pubkey__user=request.user)
+        certs = Cert.objects.filter(pubkey__user=request.user).\
+                order_by('-pubkey__created')
     except Cert.DoesNotExist:
         raise Http404
 
@@ -175,7 +176,7 @@ def cert_list_by_user(request):
 
 @login_required
 def cert_detail(request, cert_id):
-    # Look up the Cert (and raise a 404 if she's not found)
+    # Look up the Cert (and raise a 404 if not found)
     cert = get_object_or_404(Cert, pk=cert_id)
     if cert.pubkey.user != request.user:
         raise Http404

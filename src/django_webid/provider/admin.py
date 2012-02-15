@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import CertConfig, PubKey, Cert, WebIDUser
 
+
 class CertConfigAdmin(admin.ModelAdmin):
     """
     Admin class for the CertConfig model.
@@ -40,20 +41,23 @@ class CertConfigAdmin(admin.ModelAdmin):
         #XXX FIXME should remove also the delete-action!!!
         return False
 
+
 class CertAdmin(admin.ModelAdmin):
     """
     Admin class for Cert model.
     """
-    readonly_fields = ( 'user_agent_string',
+    readonly_fields = ('user_agent_string',
                         'fingerprint_sha256',
                         'fingerprint_sha1',
                         'fingerprint_md5')
+    list_display = ("__unicode__", "comment", "valid_from", "expires")
+
 
 class PubKeyAdmin(admin.ModelAdmin):
     """
     Admin class for PubKey model.
     """
-    readonly_fields = ( 'mod',
+    readonly_fields = ('mod',
                         'exp',
                         'bits',
                         'pkey_algorithm')

@@ -2,6 +2,10 @@
 
 {% load i18n %}
 {% load uni_form_tags %}
+{% comment %}
+porting this here from dev; very useful!
+{% endcomment %}
+{% load humanize %}
 
 
 {% block head_title %}{% blocktrans %}WebID Certs List{% endblocktrans %}{% endblock %}
@@ -11,6 +15,7 @@
 
 {% block body %}
 
+{% comment %}
 {% if messages %}
     <ul id="messages">
         {% for message in messages %}
@@ -18,17 +23,54 @@
         {% endfor %}
     </ul>
 {% endif %}
+{% endcomment %}
+<style>
+ul {
+  list-style: none;
+  padding-left: 0px;
+}
 
+.certcard {
+  border: solid 5px grey;
+  padding: 10px;
+  border-radius: 15px;
+  margin-bottom: 8px;
+}
+
+.certrevoke {
+  float: right;
+}
+
+.certdates {
+  float: right;
+}
+
+.right {
+  float: right;
+}
+
+</style>
 <div class="middle_panel">
-
+{% if object_list %}
     <h1>{% trans "Your WebID Certificates" %}</h1>
     {# FIXME handle case with 0 certificates --> link to install one #}
-    <p>These below are all the valid certificates that you have installed (in any of your browsers). You can click on them to see more details, or click "revoke" if you no longer want to be able to use either of them.</p>
+    <p>{% trans "These below are all the valid certificates that you have installed (in any of your browsers). You can click on them to see more details, or click <em>revoke</em> if you no longer want to be able to use either of them." %}</p>
     <ul>
     {% for cert in object_list %}
-    <li><a href="{% url webidprovider-cert-detail cert_id=cert.id %}">sha1: {{ cert.fingerprint_sha1 }}</a> {{ cert.valid_from }} {{ cert.expires }} <a class="danger" href="{% url webidprovider-cert-revoke cert_id=cert.id %}">revoke</a></li>
+    <li>
+    <div class="certcard">
+	    <p><a href="{% url webidprovider-cert-detail cert_id=cert.id %}">{% if cert.comment %}<b>{{ cert.comment }}</b>{% else %}<b>sha1: {{ cert.fingerprint_sha1 }}</b>{% endif %}</a></p>
+	    <span style="font-size: 50%">{% trans "VALID FROM" %}:</span> {{ cert.valid_from|naturalday}}
+	    <span style="font-size: 50%">{% trans "VALID UNTIL" %}:</span> {{ cert.expires|naturalday }} <a class="danger right" href="{% url webidprovider-cert-revoke cert_id=cert.id %}">revoke</a>
+    </div>
+    </li>
     {% endfor %}
     </ul>
+{% else %}
+<h1>{% trans "No WebID certs in your profile yet." %}</h1>
+<p>{% trans "You still don't have any WebID cert installed."%}</p>
+<p>You can <a href="{% url webidprovider-add_cert %}">{% trans "<!-- add cert link -->create one." %}</a></p>
+{% endif %}
 
 </div>
 

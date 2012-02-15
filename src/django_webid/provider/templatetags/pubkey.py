@@ -16,8 +16,8 @@ DEPRECATED_PUBKEY_SNIPPET = u"""
 
 PUBKEY_SNIPPET_RDFA = u"""
 <div rel="cert:key">
-    <p>One of my Public Keys... made on...</p>
-    <div typeof="cert:RSAPublicKey">
+    <p style="font-weight:bold;">Public Key #%(num)s, created on %(ts)s</p>
+    <div typeof="cert:RSAPublicKey" class="certcard">
       <dl>
       <dt>Modulus (hexadecimal)</dt>
       <dd style="word-wrap: break-word; white-space: pre-wrap;"
@@ -52,11 +52,13 @@ PADDING_CHR = u'\u271c'
 PADDING_SPACES =  u' %s ' % PADDING_CHR
 TRAILING_CHR = u'\u2665'
 
+
 def prettyfy(hexstr):
     return PADDING_SPACES.join([
         hexstr[x:x+2].upper()
         for x in xrange(0,len(hexstr),2)
         ]) + ' %s' % TRAILING_CHR
+
 
 def do_pubkey_rdf(parser, token):
     try:
@@ -75,16 +77,20 @@ class PubKeyRDFNode(template.Node):
     def __init__(self, _format, user_var):
         self._format = _format
         self.user_var = template.Variable(user_var)
+
     def render(self, context):
         try:
             #XXX REFACTOR
             uu = self.user_var.resolve(context)
             if self._format == "rdfa":
                 r = ""
-                for pk in uu.keys:
-                    r = r + PUBKEY_SNIPPET_RDFA % {'mod':pk.mod,
+                for num, pk in enumerate(uu.keys):
+                    r = r + PUBKEY_SNIPPET_RDFA % {
+                        'num': num + 1,
+                        'mod':pk.mod,
                         'pretty_mod': prettyfy(pk.mod),
                         'exp':pk.exp,
+                        'ts': pk.created.strftime("%D"),
                         'uri': uu.absolute_webid_uri,
                         }
                 return r

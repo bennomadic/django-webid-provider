@@ -11,6 +11,7 @@
 
 {% block body %}
 
+{% comment %}
 {% if messages %}
     <ul id="messages">
         {% for message in messages %}
@@ -18,8 +19,31 @@
         {% endfor %}
     </ul>
 {% endif %}
+{% endcomment %}
+<style>
+.small { font-size: 80% }
+</style>
 
 <div class="middle_panel">
+<script type="text/javascript">
+$(document).ready(function() {
+// replace me with RDFa selector when available
+ //$('*[property="modulus"].*[datatype="xsd:hexBinary"]').each(function(index, element) {
+ $('.hexlify').each(function(index, element) {
+  var digitsPerLine = 32;
+  var separator = ":";
+  var textIn = $(element).text();
+  var textOut = new String();
+
+  for(var i=0; i<textIn.length; i+=2) {
+   textOut = ((i%digitsPerLine)==0 && i!=0) ? textOut=textOut+"\n" : textOut;
+   textOut = ((i%digitsPerLine)==0) ? textOut+textIn.substr(i, 2) : textOut+separator+textIn.substr(i,2);
+  }
+
+  $(element).text(textOut);
+  });
+});
+</script>
 
     <h1>{% trans "WebID Certificate Details" %}</h1>
     {% if not object.pubkey.is_active %}
@@ -32,16 +56,24 @@
     <p><b>installed on browser</b>: {{ object.user_agent_string }}</p>
     {% endif %}
 
-    <p><b>sha1 fingerprint</b>: {{ object.fingerprint_sha1 }}</p>
-    <p><b>sha256 fingerprint</b>: {{ object.fingerprint_sha256 }}</p>
-    <p><b>md5 fingerprint</b>: {{object.fingerprint_md5 }}
+    <h3>Fingerprints:</h3>
+    <div class="fingerprints">
+    <p><b>sha1</b>: <pre><span class="small">{{ object.fingerprint_sha1 }}</span></pre></p>
+    {% comment %}
+	should split this too; but must remove : first
+    {% endcomment %}
+    <p><b>sha256</b>:</p> <pre><span class="small">{{ object.fingerprint_sha256 }}</span></pre>
+    <p><b>md5</b>: <pre><span class="small">{{object.fingerprint_md5 }}</span></pre></p>
+    </div>
+    <h3>Validity:</h3>
     <p><b>Valid From</b>: {{object.valid_from}}</p>
     <p><b>Valid Until</b>: {{object.expires}}</p>
 
     <h2>Public Key on this Certificate</h2>
     <p><b>Bits</b>: {{object.pubkey.bits}}</p>
-    <p><b>Modulus</b>: {{object.pubkey.mod}}</p>
-    <p><b>Exponent</b>: {{object.pubkey.exp}}</p>
+    <p><b>Modulus</b>:</p> 
+	<pre><span class="hexlify">{{object.pubkey.mod}}</span></pre>
+    <p><b>Exponent</b>: <pre>{{object.pubkey.exp}}</pre></p>
 
     {% if object.pubkey.is_active %}
     <div class="cert_revoke_link">

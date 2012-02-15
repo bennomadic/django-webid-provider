@@ -9,17 +9,58 @@
 <head>
 <meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8" />
 <title>WebID profile for {{ webiduser.username }}</title>
-{# CAN WE LINK SOMEHOW TO THE RDF+XML VERSION??? #}
-{# sure... link-rel #}
-{# but we should have here some content-negociation in place :) #}
+{# TO-DO: link-rel links #}
+<script type="text/javascript">
+<![CDATA[
+{% comment %}
+this function below is WAY TOO SLOW!
+do not use. better some prettify filter or something...
+window.onload = function() {
+  //var sep = ":";
+  //var sel = document.querySelectorAll("[datatype*='xsd:hexBinary'][property*='cert:modulus']");
+  //for (var i=0; i<sel.length; i++) {
+  //  console.debug('foo')
+  //  var modulus = sel.item(i).innerHTML;
+  //  console.debug(modulus);
+  //  var n, newmod = "";
+  //  for(var j=0; j<modulus.length; j+=2) {
+  //    n = modulus.substr(j, 2);
+  //    newmod = (j<modulus.length-2) ? newmod + n + sep : newmod + n;
+  //    console.debug(newmod);
+  //  }
+  //  sel.item(i).innerHTML = newmod;
+  //}
+//}
+{% endcomment %}
+]]>
+</script>
+{% comment %}
+TODO
+add a MUCH SMALLER CSS / or inline. do not need to include the whole base!
+{% endcomment %}
+<link rel="stylesheet" href="{{ STATIC_URL }}django_webid/provider/css/base.css" />
 </head>
 <body typeof="foaf:PersonalProfileDocument" about="{{ webiduser.absolute_webid_uri }}">
+<div class="wrapper">
 <!-- WebID HTML snippet. The xmlns declarations above can be moved into the div below if needed-->
 <div about="#me" typeof="foaf:Person">
-  <span property="foaf:name">{{ webiduser.username }}</span>
-  <h2>My RSA Public Keys</h2>
+  <h2>WebID profile for <span property="foaf:name">{{ webiduser.username }}</span></h2>
+  <img src="http://www.w3.org/Icons/SW/Buttons/sw-rdfa-orange.png"/>
+  {% comment %}
+  here we can include a small foaf profile (specially if using the default webid-profile app).
+  - depiction
+  - name / accounts / etc...
+  {% endcomment %}
+  <h3>Public Keys associated with this profile</h3>
+  {% comment %}
+  XXX TODO:
+  - add a little "what's this?" section / link.
+  - add a show / hide link / js.
+  {% endcomment %}
   {% pubkey_rdf "rdfa" webiduser %}
-</div>
+</div> <!-- about:me -->
+</div> <!-- wrapper -->
 <!-- WebID HTML snippet -->
+<div class="footer">Powered by django. (c) 2012 Cooperative Quinode / RhizoLabs.</div>
 </body>
 </html>

@@ -206,7 +206,12 @@ class Cert(models.Model):
         db_table = "webid_provider_cert"
 
     def __unicode__(self):
-        return "%s's cert with Fingerprint %s" % (
+        if self.comment:
+            return "%s's cert: %s" % (
+                self.pubkey.user.username,
+                self.comment)
+        else:
+            return "%s's cert: %s" % (
                 self.pubkey.user.username,
                 self.fingerprint_sha1)
 
