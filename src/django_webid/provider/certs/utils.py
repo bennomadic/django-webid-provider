@@ -6,6 +6,8 @@ from datetime import datetime
 from OpenSSL import crypto
 import M2Crypto as m2crypto
 
+from django.contrib.sites.models import Site
+
 #XXX GOD KILLS A KITTEN EVERY TIME
 #WE USE BOTH WRAPPERS TOGETHER!!!
 #Hopefully, Santa bring us an improved m2crypto API
@@ -174,7 +176,7 @@ class CertCreator(object):
         issuer_data = (('CN', 'Not a Certification Authority'),
                         ('O', 'FOAF+SSL'),
                         ('OU', 'The Community of Self Signers'))
-        for k,v in issuer_data:
+        for k, v in issuer_data:
             setattr(icert.get_subject(), k, v)
         self.icert = icert
 
@@ -187,8 +189,14 @@ class CertCreator(object):
                 self.opts.cn_field,
                 None)
         if not cn_field:
-            cn_field = gettattr(self.webiduser,
+            cn_field = getattr(self.webiduser,
                     'username')
+        try:
+            domain = Site.objects.get_current().domain
+        except:
+            domain = None
+        if domain:
+            cn_field = "%s@%s" % (cn_field, domain)
         self.cert.get_subject().CN = cn_field
 
     def _set_pubkey(self):

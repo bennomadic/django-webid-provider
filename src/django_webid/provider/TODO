@@ -7,13 +7,13 @@
    Models for profiles/users
    (Proxy Models to User; Abstract; WebIdIdentity, 
 
-2.1 [     ] See what to do with PROFILE
+2.1 [ done ] See what to do with PROFILE
 	    - Avoid Abstract thing.
    
 2.2 [     ]
     Separate (extern, hosted).
 
-2.3 [     ]
+2.3 [ done ]
     dependency management.
     >>>> THINK WHAT TO DO WITH
     >>>> DEPENDENCIES between -auth and -certs.
@@ -100,17 +100,13 @@ Extras:
 
 9.  [    ]
     email verification as 2nd token.
-    (do they want it??)
+    (do we want it??)
 
 10. [    ]
     Code cleaning.
     m2crypto vs. openssl wrappers.
-. 
+
 11. Security auditing.
-
-12. [ done   ] IMPORTANT!!
-
-	IE FUCKING SUPPORT. pkcs10.
 
 13. Test deployment + make sure it works out-of-the-box
     ---> with minimal configuration...
@@ -118,14 +114,14 @@ Extras:
 14. [    ]
 	Automatic cert creation??? (ie, no user input?)
 	[ done ] jQuery hack
-	[      ] try with iframe
+	[      ] iframe
 
 15. Expiration tasks... (to notify users)
 
 16. Something for re-using admin jQuery?
 
 17. Improve Common name selection:
-	- username + "@site url???"
+	- [ done ] username + "@site url???"
 	- free user input? (so he remembers)
 
 Later:
