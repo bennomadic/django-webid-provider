@@ -61,7 +61,7 @@ ul {
     <div class="certcard">
 	    <p><a href="{% url webidprovider-cert-detail cert_id=cert.id %}">{% if cert.comment %}<b>{{ cert.comment }}</b>{% else %}<b>sha1: {{ cert.fingerprint_sha1 }}</b>{% endif %}</a></p>
 	    <span style="font-size: 50%">{% trans "VALID FROM" %}:</span> {{ cert.valid_from|naturalday}}
-	    <span style="font-size: 50%">{% trans "VALID UNTIL" %}:</span> {{ cert.expires|naturalday }} <a class="danger right" href="{% url webidprovider-cert-revoke cert_id=cert.id %}">revoke</a>
+	    <span style="font-size: 50%">{% trans "UNTIL" %}:</span> {{ cert.expires|naturalday }} <a class="danger right" href="{% url webidprovider-cert-revoke cert_id=cert.id %}">revoke</a>
     </div>
     </li>
     {% endfor %}

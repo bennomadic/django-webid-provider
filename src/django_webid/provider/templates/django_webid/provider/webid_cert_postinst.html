@@ -45,7 +45,7 @@ $(document).ready(function($) {
   });
 
 
-  $("#nameit").click(function() {
+  $("#nameit").click(function(event) {
     event.preventDefault();
     $.ajax({
       url: "{% url webidprovider-nameit %}",
@@ -54,6 +54,10 @@ $(document).ready(function($) {
       dataType: "json",
       success: function(data) {
 	    //console.debug('ok');
+      	if(data.named===true){
+	  console.debug('named!');
+	  window.location = "{% url webidprovider-cert_list %}";
+	}
       } 
     });
   });
