@@ -76,7 +76,7 @@ class CertCreator(object):
                 "expires_ts",
                 )
         for k in POSSIBLE_OVERRIDES:
-            if kwargs.has_key(k):
+            if k in kwargs:
                 overrides[k] = kwargs[k]
 
         #validity overrides
@@ -94,12 +94,11 @@ class CertCreator(object):
         #might split...
 
         #issuerKey override (for test purposes mainly)
-        issuerKey = kwargs.get('issuerKey',None)
+        issuerKey = kwargs.get('issuerKey', None)
         if issuerKey:
             self.issuerKey = issuerKey
 
         self.opts = opt
-
 
     def _get_user_data(self, user):
         from django_webid.provider.models import WebIDUser
@@ -131,8 +130,8 @@ class CertCreator(object):
         if "BEGINIECERTIFICATEREQUEST" in spkac_str:
             #XXX improve csr type detection (get a flag from view)
             pkcs10 = spkac_str.replace(
-                    '-----BEGINIECERTIFICATEREQUEST-----','').replace(
-                    '-----ENDIECERTIFICATEREQUEST-----','')
+                    '-----BEGINIECERTIFICATEREQUEST-----', '').replace(
+                    '-----ENDIECERTIFICATEREQUEST-----', '')
 
             der = base64.b64decode(pkcs10)
             self.csr = crypto.load_certificate_request(
@@ -155,10 +154,8 @@ class CertCreator(object):
         """
         self.cert = crypto.X509()
 
-
     # ***
     # begins crypto functions that alter the certificate
-
     def _create_key_pair(self, _type, bits):
         pkey = crypto.PKey()
         pkey.generate_key(_type, bits)
@@ -282,16 +279,15 @@ class CertCreator(object):
         mod = pubkey.get_modulus().lower()
 
         pkrsa = pubkey.get_rsa()
-        e  = m2crypto.m2.rsa_get_e(pkrsa.rsa)
+        e = m2crypto.m2.rsa_get_e(pkrsa.rsa)
         ha = binascii.hexlify(e)
         #not correct
         #but it's not likely >3
         nbytes = ha.lstrip('0')[0]
-        exp = int(ha[-int(nbytes)*2:],16)
+        exp = int(ha[-int(nbytes) * 2:], 16)
         bits = pubkey.size() * 8
 
         return (mod, exp, bits)
-
 
     ##############################
     # done with crypto functions
@@ -301,7 +297,6 @@ class CertCreator(object):
     #XXX can we decouple the instance writting
     #from the crypto functions??
     #--- As two separate classes...
-
     def _set_cert_serial_number(self, serial):
         self.cert.set_serial_number(serial)
 
@@ -337,7 +332,6 @@ class CertCreator(object):
             filetype,
             self.cert)
 
-
     def _get_cert_hashes(self):
         """
         returns sha1 and md5 hashes of the
@@ -345,7 +339,7 @@ class CertCreator(object):
         strings.
         """
         import hashlib
-        beautify = lambda s: ':'.join([s[i:i+2] \
+        beautify = lambda s: ':'.join([s[i:i + 2] \
                 for i in xrange(0, len(s), 2)])
         return (beautify(
                     hashlib.sha1(self.cert_dump).\
@@ -374,7 +368,6 @@ class CertCreator(object):
 
         c.user_agent_string = self.user_agent_string
         c.save()
-
 
     #####################################################
     #####################################################
@@ -439,7 +432,6 @@ class CertCreator(object):
         return self.fingerprint_sha1
 
 
-
 ###############################################
 ###############################################
 # SOME OTHER OLD FUNCTIONS FROM our legacy code
@@ -447,7 +439,6 @@ class CertCreator(object):
 ###############################################
 # To be cleaned and reused
 # (pkcs12, i'm looking at you)
-
 def get_serial_from_file(serial_path='/tmp/webid_cert_serial.txt'):
     """Get serial number from file
 
@@ -464,7 +455,8 @@ def get_serial_from_file(serial_path='/tmp/webid_cert_serial.txt'):
         serial_file = open(serial_path, "r")
         data = serial_file.read()
         serial_file.close()
-        if data: number = int(data)
+        if data:
+            number = int(data)
         number += 1
     except:
         number = 1
@@ -472,6 +464,7 @@ def get_serial_from_file(serial_path='/tmp/webid_cert_serial.txt'):
     serial_file.write(str(number))
     serial_file.close()
     return number
+
 
 def gen_keypair(bits=1024):
     """Create RSA key pair
@@ -481,7 +474,6 @@ def gen_keypair(bits=1024):
     :type bits: int
     :return: key
     :rtype: EVP.PKey
-
     """
     pkey = EVP.PKey()
     rsa = RSA.gen_key(bits, 65537)
@@ -500,9 +492,7 @@ def gen_csr(pkey):
     :type pkey: EVP.PKey
     :return: x509 request
     :rtype: X509.Request
-
     """
-
     csr = X509.Request()
     csr.set_pubkey(pkey)
     return csr
@@ -643,8 +633,6 @@ def gen_httpwebid_selfsigned_cert_pemfile(webid,
             years=years, nick=nick)
     save_pkey_cert_to_pemfile(cert, pkey, cert_path, key_path)
     return cert_path, key_path
-
-
 
 ##########################################
 # PKCS12 SHIT
