@@ -38,6 +38,8 @@ import re
 
 from django import template
 from django.contrib.auth import logout
+from django.core.exceptions import ImproperlyConfigured
+from django.db import IntegrityError
 from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response, redirect,\
         get_object_or_404
@@ -71,6 +73,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+logger = logging.getLogger(name=__name__)
 
 #############################################################
 # VIEWS BEGIN
@@ -79,6 +82,8 @@ from django.dispatch import receiver
 # CREATE USER
 ################
 #XXX we should hook django register app here, instead of this
+
+
 def create_user(request):
     """
     creates user and redirects to the page
@@ -107,8 +112,8 @@ def create_user(request):
                 u = form.save()
 
                 if settings.DEBUG:
-                    logging.debug('created user... %s' % u)
-                    logging.debug('active? %s' % u.is_active)
+                    logger.debug('created user... %s' % u)
+                    logger.debug('active? %s' % u.is_active)
 
                 u.backend = 'django.contrib.auth.backends.ModelBackend'
                 auth_login(request, u)
@@ -468,7 +473,7 @@ def webid_identity_keygen(request):
                 #XXX REFACTOR ##############################
                 pubkey = re.sub('\s', '', str(request.POST['pubkey']))
                 if settings.DEBUG:
-                    logging.debug('PUBKEY=%s' % pubkey)
+                    logger.debug('PUBKEY=%s' % pubkey)
                     #print('PUBKEY=%s' % pubkey)
                 spki = crypto.NetscapeSPKI(pubkey)
                 cert = crypto.X509()
@@ -480,13 +485,13 @@ def webid_identity_keygen(request):
                 cert.get_subject().CN = nick
                 cert.set_serial_number(001)
                 cert.gmtime_adj_notBefore(0)
-                cert.gmtime_adj_notAfter(10*365*24*60*60)
+                cert.gmtime_adj_notAfter(10 * 365 * 24 * 60 * 60)
                 cert.set_issuer(cert.get_subject())
                 URI_STR = 'URI:%s' % (webid)
                 ext = crypto.X509Extension('subjectAltName', 1,
                     URI_STR)
                 cert.add_extensions([ext])
-                cert.set_version(2) # version 3 (decimal)
+                cert.set_version(2)  # version 3 (decimal)
                 #we get the pubkey from the spkac
                 cert.set_pubkey(spki.get_pubkey())
                 res = crypto.dump_certificate(crypto.FILETYPE_ASN1, cert)
@@ -495,22 +500,24 @@ def webid_identity_keygen(request):
                 return r
                 #XXX REFACTOR ##############################
 
-            return render_to_response('django_webid/provider/webid_identity_keygen.html', {
-                'form': form,
-                "MEDIA_URL": settings.MEDIA_URL,
-                "STATIC_URL": settings.STATIC_URL,
-                'messages': messages,
-            }, context_instance=RequestContext(request))
+            return render_to_response(
+                    'django_webid/provider/webid_identity_keygen.html',
+                    {'form': form,
+                    "MEDIA_URL": settings.MEDIA_URL,
+                    "STATIC_URL": settings.STATIC_URL,
+                    'messages': messages,
+                    }, context_instance=RequestContext(request))
     else:
-        form = WebIdIdentityForm() # An unbound form
+        form = WebIdIdentityForm()  # An unbound form
 
-    return render_to_response('django_webid/provider/webid_identity_keygen.html', {
-        #XXX TODO: add randomchars challenge...
-        'form': form,
-        "MEDIA_URL": settings.MEDIA_URL,
-        "STATIC_URL": settings.STATIC_URL,
-        'messages': messages,
-    }, context_instance=RequestContext(request))
+    return render_to_response(
+            'django_webid/provider/webid_identity_keygen.html', {
+            #XXX TODO: add randomchars challenge...
+            'form': form,
+            "MEDIA_URL": settings.MEDIA_URL,
+            "STATIC_URL": settings.STATIC_URL,
+            'messages': messages,
+            }, context_instance=RequestContext(request))
 
 
 def webid_identity(request):
@@ -544,8 +551,8 @@ def webid_identity(request):
                     path = pemfile_2_pkcs12file()
                     #print "PKC12 path: " + path
                 except Exception, e:
-                    message = "Error trying to generate client certificate: " + str(e)
-                    #print message
+                    message = "Error trying to generate client certificate: "\
+                    + str(e)
                     messages.append(message)
                     # can not continue
                 else:
@@ -554,16 +561,17 @@ def webid_identity(request):
                     fp.close()
                     length = os.path.getsize(path)
                     r = HttpResponse(mimetype="application/x-x509-user-cert")
-                    #handle = webid.split('/')[-1] # XXX ugly, but has to be something!
-                    r['Content-Disposition'] = 'attachment; filename=%s%s' % (nick, "_cert.p12")
+                    #handle = webid.split('/')[-1]
+                    # XXX ugly, but has to be something!
+                    r['Content-Disposition'] = 'attachment; filename=%s%s' % \
+                            (nick, "_cert.p12")
                     r["Content-Length"] = length
-                    r["Accept-Ranges"] ="bytes"
+                    r["Accept-Ranges"] = "bytes"
                     r.write(content)
                     messages.append("created")
                     return r
-#            finally:
-            # if exception or not is happend and no return is already executed
-            return render_to_response('django_webid/provider/webid_identity.html', {
+            return render_to_response(
+                'django_webid/provider/webid_identity.html', {
                 'form': form,
                 "MEDIA_URL": settings.MEDIA_URL,
                 "STATIC_URL": settings.STATIC_URL,
@@ -583,22 +591,82 @@ def webid_identity(request):
 ###########################################
 #            SIGNALS                      #
 ###########################################
-@receiver(post_save, sender=User)
-def init_blank_profile_for_new_user(sender, **kwargs):
-    """
-    initializes a blank profile for webiduser
-    in the moment of its creation.
-    """
-    if kwargs.get('created', None):
-        user = kwargs.get('instance')
-        webiduser = WebIDUser.objects.get(id=user.id)
 
-        profile_model = settings.AUTH_PROFILE_MODULE
-        app_split = profile_model.split('.')
-        if len(app_split) == 2:
-            app_label, mod_label = app_split
-        else:
-            app_label, mod_label = app_split[-2:]
-        pklss = models.get_model(app_label, mod_label)
+#We need to initialize a blank profile when a
+#WebIDUser is created (actually, when a User is
+#created, since it's a proxy model).
+#But this can cause problems if we do not have
+#enough mandatory fields filled up, or if
+#an equivalent signal is already in place.
 
-        pklss.objects.create(user=webiduser)
+#XXX only register if there's no other signal registered?
+#... that is subject to order issues.
+#XXX we can control this also with a WEBIDPROVIDER_SKIP_PROFILE_INIT
+#or something similar.
+
+SKIP_PROFILE_INIT = getattr(settings, "WEBIDPROVIDER_SKIP_PROFILE_INIT", False)
+PROF_INIT_CB_KEY = "WEBIDPROVIDER_PROFILE_INIT_CALLBACK"
+
+if not SKIP_PROFILE_INIT:
+    @receiver(post_save, sender=User)
+    def init_blank_profile_for_new_user(sender, **kwargs):
+        """
+        initializes a blank profile for webiduser
+        in the moment of its creation.
+        """
+        if kwargs.get('created', None):
+            user = kwargs.get('instance', None)
+            logger.warning('creating blank profile for user')
+            logger.warning('kwargs=%s' % kwargs)
+
+            PROFILE_INIT_CB = getattr(settings,
+                    PROF_INIT_CB_KEY,
+                    None)
+            if PROFILE_INIT_CB:
+                fun_split = PROFILE_INIT_CB.split('.')
+
+                if len(fun_split) == 3:
+                    app, module, fun_name = fun_split
+                    fun = getattr(
+                            getattr(__import__(app),
+                                module),
+                            fun_name)
+
+                if len(fun_split) == 2:
+                    module, fun_name = fun_split
+                    fun = getattr(__import__(module),
+                            fun_name)
+
+                else:
+                    logger.warning('%s expected to be in the form \
+"app.module.function or module.function"')
+
+                if not callable(fun):
+                    raise ImproperlyConfigured(
+                        "A function is expected in \
+%s" % PROF_INIT_CB_KEY)
+                try:
+                    fun(user=user)
+                    return
+                except:
+                    logger.error('Error while calling \
+%s' % PROF_INIT_CB_KEY)
+                    raise
+
+            webiduser = WebIDUser.objects.get(id=user.id)
+
+            profile_model = settings.AUTH_PROFILE_MODULE
+            app_split = profile_model.split('.')
+            if len(app_split) == 2:
+                app_label, mod_label = app_split
+            else:
+                app_label, mod_label = app_split[-2:]
+            pklss = models.get_model(app_label, mod_label)
+
+            try:
+                pklss.objects.create(user=webiduser)
+            except IntegrityError:
+                logger.error('Could not save profile object for user %s in \
+django_webid.provider signal' % webiduser)
+                raise ImproperlyConfigured("Error when initializing blank \
+profile. Use WEBIDPROVIDER_SKIP_PROFILE_INIT if needed, or pass a callback.")
