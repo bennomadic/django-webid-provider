@@ -1,0 +1,108 @@
+=============
+Settings
+=============
+
+.. contents::
+        :local:
+        :depth: 1
+
+.. warning::
+
+   The info below is just a stub for the design phase, therefore it is  subject to changes. It is mostly used as a requirements doc at the moment, so don't trust it too much...
+
+Available settings
+==================
+
+Here's a full list of all available settings, and their default values.
+
+.. setting:: AUTH_PROFILE_MODULE
+
+AUTH_PROFILE_MODULE
+-------------------
+
+Default: Not defined.
+
+As specified in the django docs, the site-specific user profile model used by your site.
+
+For a sample application, you can use ``...``
+
+**Is this strictly needed???**
+
+WEBIDPROVIDER_SKIP_PROFILE_INIT
+-------------------------------
+
+Default: ``False``
+
+Disables the registered signal that tries to initialize a blank profile when an WebIDUser is created.
+
+WEBIDPROVIDER_PROFILE_INIT_CALLBACK
+-----------------------------------
+
+Default: None.
+
+Custom function that gets called for initializing a blank profile. It gets ``user`` passed as keyword argument.
+
+
+WEBIDPROVIDER_WEBIDURI_CALLBACK
+-------------------------------
+*(not implemented yet)*
+
+This function will be called during the cert creation process, in order to gather the info needed to write the final WebID URI(s) that will go in the subjectAltName field in the certificate.
+
+Implementation details still unclear, but several open possibilities:
+
+* Callback is called with some documented context as argument.
+
+* Callback returns the final string
+
+* Doubt: what is the notation for several URIS?
+
+* Instead of a callable, we can pass a string with an named urlpattern
+
+  * (*will need also some convention re. what context element are passed and how*).
+
+  * (*this is related also to the still unresolved CN field FK issue*)
+
+Note that, if we go the uri list path... or even in the str one... we DO NOT need to prepend the "URI:" prefix. Code takes care of adding it.
+       
+WEBIDPROVIDER_WEBID_OVER_HTTPS
+------------------------------
+*(not implemented yet)*
+
+This might not be needed finally if we delegate that responsibility to the WEBIDAUTH_WEBIDURI_CALLBACK, but I thought it could simplify things a little bit (specially if we are using the webid profile pattern that we pack with django-webid-provider). Could be bool, or could be ('no', 'optional', 'force') options:
+
+* If no, just URI http://
+
+* If optional, might be sthing like https://...webiduri... , http://...sameuri
+
+* If force: just make sure we have the httpS://prefixed uri...
+
+Might work as a switch, for reusing the same webidauth callback (it interacts with that one in the sense that it is called from inside there, or it modifies / double checks its output.
+
+WEBIDPROVIDER_CREATE_USER
+-------------------------
+
+*(not implemented yet)*
+
+Default: ``True``
+
+Tells if a new user should be created without further restrictions when using the webid user registration forms.
+Here we have to specify more options:
+
+* Create user with no usable passoword (it will only allow webidlogins)
+
+* Create user with usable password during the WebIDUser creation process.
+
+* Ony allow WebID profile and cert creation for pre-existing users.
+
+WEBIDPROVIDER_CHECK_EMAIL
+-------------------------
+*(not implemented)*
+
+*Maybe we do not need the "webidprovider" bit and we can use some of the django-profile settings...*
+
+If ``True``, it will need a confirmation token sent by email before activating the WebID User.
+
+Apache config
+=============
+**TBD**

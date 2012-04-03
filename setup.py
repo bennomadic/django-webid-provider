@@ -52,6 +52,6 @@ a WebID provider""",
         "Topic :: Security :: Cryptography",
     ],
     keywords='foaf, ssl, webid, x509, certificate, client certificate,\
-authentication, authorization,django',
+authentication, authorization, django',
     zip_safe=False,
 )
