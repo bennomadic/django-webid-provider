@@ -1,9 +1,11 @@
 from django.db import models
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, NoReverseMatch
+from django.core.exceptions import ImproperlyConfigured
 #from django.utils.translation import gettext as _
 
 
@@ -225,8 +227,11 @@ class WebIDURI(models.Model):
     It can be accessed through WebIDUser proxy model.
     """
     uri = models.URLField(null=True, blank=True)
+
+    #XXX is ok FK to user or WebIDUser??
     user = models.ForeignKey(User, unique=True,
             related_name="stored_webiduris")
+
     #External/Internal (hosted) webid users.
     _is_user_hosted_here = models.BooleanField()
     #@property internal_user / external_user
@@ -267,13 +272,26 @@ class WebIDUser(User):
             return None
 
     def _get_webid_url(self):
-        #XXX FIXME
-        #if it is hosted (see checking profile)
-        #return reverse url
-        #XXX in the future, we can use any other
-        #user field. Use contenttypes in CertConfig.
-        return reverse('webidprovider-webid_uri',
-                kwargs={'username': self.username})
+        # XXX FIXME
+        # if it is hosted (see checking profile)
+        # return reverse url
+        # XXX in the future, we can use any other
+        # user field. Use contenttypes in CertConfig?
+        WEBIDURI_CB = getattr(settings,
+                "WEBIDPROVIDER_WEBIDURI_CALLBACK",
+                None)
+        if WEBIDURI_CB and callable(WEBIDURI_CB):
+            return WEBIDURI_CB(self)
+        else:
+            try:
+                return reverse('webidprovider-webid_uri',
+                    kwargs={'username': self.username})
+            except NoReverseMatch:
+                raise ImproperlyConfigured(
+                    """Either configure a \
+WEBIDPROVIDER_WEBIDURI_CALLBACK or make sure that there is a \
+url with the name 'webidprovider-webid_uri' somewhere in your urls.
+""")
 
     webid_url = property(_get_webid_url)
     #XXX in the property, need to hook a configurable callback.
@@ -281,17 +299,24 @@ class WebIDUser(User):
     #or use proper fields.
 
     def _get_absolute_webid_uri(self):
-        #XXX should do something about the HTTP(S)
-        #for the future
 
-        #Hmm what about putting https and then http?
         #Does the spec handle the recursion gracefully?
         #webid.auth module does not.
 
         #XXX document that we NEED TO HAVE SITES APP WORKING.
         #XXX get a setting for this?
 
-        uri = "http://%s%s#me" % (
+        USE_HTTPS = getattr(settings, "WEBIDPROVIDER_WEBID_OVER_HTTPS", False)
+        if USE_HTTPS:
+            proto = "https"
+        else:
+            proto = "http"
+        # XXX need a HTTP(S) config
+        # complete with all the options
+        # putting https and then http?
+
+        uri = "%s://%s%s#me" % (
+                proto,
                 Site.objects.get_current().domain,
                 self._get_webid_url())
         return uri
@@ -329,15 +354,10 @@ class WebIDProfile(models.Model):
     #have a certain set of methods).
     #we can also define a stub for each method??.
 
-    #we store here the webid_uri for external users.
-    #for internal users you should use the absolute_webid_uri
-    #property of WebIDUser
+    #XXX FIXME
+    #stub basic properties: name, nick, contact, accounts...
 
-    #XXX Move this to WebIDUser ^^^
-    #uri = models.URLField()
     user = models.OneToOneField(WebIDUser)
-
-    #XXX move this to WebIDUser ^^^
 
     class Meta:
         abstract = True

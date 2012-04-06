@@ -363,6 +363,7 @@ def add_cert_to_user(request):
         "challenge": challenge,
         'messages': messages,
         'user': request.user,
+        'webiduser': webiduser,
         'numpubkeys': numpubkeys},
         context_instance=RequestContext(request))
 

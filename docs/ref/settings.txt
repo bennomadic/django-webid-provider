@@ -45,31 +45,29 @@ Custom function that gets called for initializing a blank profile. It gets ``use
 
 WEBIDPROVIDER_WEBIDURI_CALLBACK
 -------------------------------
-*(not implemented yet)*
+Default: None
 
-This function will be called during the cert creation process, in order to gather the info needed to write the final WebID URI(s) that will go in the subjectAltName field in the certificate.
+This function is called during the cert creation process, in order to gather the info needed to write the final WebID URI that will go in the **subjectAltName** field in the certificate.
 
-Implementation details still unclear, but several open possibilities:
+* The callback function is called with the ``WebIDUser`` instance as the only argument.
 
-* Callback is called with some documented context as argument.
+* Callback should return the final string
 
-* Callback returns the final string
+* Note: several URIS still not implemented.
 
-* Doubt: what is the notation for several URIS?
+* If you do not specify a callback, the certificate constructor will try to reverse a view named ``webidprovider-webiduri``.
 
-* Instead of a callable, we can pass a string with an named urlpattern
-
-  * (*will need also some convention re. what context element are passed and how*).
-
-  * (*this is related also to the still unresolved CN field FK issue*)
-
-Note that, if we go the uri list path... or even in the str one... we DO NOT need to prepend the "URI:" prefix. Code takes care of adding it.
+Note that your callback DOES NOT need to prepend the "URI:" prefix; it gets added to it.
        
 WEBIDPROVIDER_WEBID_OVER_HTTPS
 ------------------------------
-*(not implemented yet)*
+Default: ``False``
 
 This might not be needed finally if we delegate that responsibility to the WEBIDAUTH_WEBIDURI_CALLBACK, but I thought it could simplify things a little bit (specially if we are using the webid profile pattern that we pack with django-webid-provider). Could be bool, or could be ('no', 'optional', 'force') options:
+
+Now: ``False`` for ``http`` or ``True`` for ``https``.
+
+*The following not implemented yet:*
 
 * If no, just URI http://
 
