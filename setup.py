@@ -36,7 +36,7 @@ a WebID provider""",
     long_description=long_description,
     author='Ben Carrillo',
     author_email='bennomadic@gmail.com',
-    download_url='https://github.com/bennomadic/django-webid-provider/tarball/v0.1',
+    download_url='https://github.com/bennomadic/django-webid-provider/tarball/v0.2',
     url="https://github.com/bennomadic/django-webid-provider",
     classifiers=[
         'Development Status :: 3 - Alpha',
