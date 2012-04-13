@@ -1,0 +1,12 @@
+++++++++++++++++++++++++++
+Django WebID Provider News
+++++++++++++++++++++++++++
+
+What's New in django-webid-provider 0.2.0
+=========================================
+
+- improved post installation processs for certificate installation.
+- some support for chrome's lack of feedback during public key generation.
+- dialog to avoid accidental cert duplication.
+- certs can be named now.
+- introduced multipart mime for certificate delivery (broken on chrome).
