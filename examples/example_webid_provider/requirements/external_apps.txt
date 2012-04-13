@@ -1,6 +1,8 @@
 --requirement=libs.txt
 M2Crypto>=0.20.2
 pyOpenSSL>=0.10
+
+python-webid>=0.2.0
 django-uni-form>=0.7.0
 django-defaultsite==1.1
 
@@ -16,6 +18,7 @@ django-registration-defaults
 # and point to pypi when fixed
 # Now bennomadic's master has negotiate header and content negotiation.
 -e git://github.com/bennomadic/django-conneg.git#egg=django_conneg
+
 
 #django-registration-defaults
 #-e git://github.com/yourcelf/django-registration-defaults.git#egg=django-registration-defaults

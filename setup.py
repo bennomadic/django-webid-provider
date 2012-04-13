@@ -38,7 +38,7 @@ a WebID provider""",
     author_email='bennomadic@gmail.com',
     download_url='https://github.com/bennomadic/django-webid-provider/tarball/v0.2',
     url="https://github.com/bennomadic/django-webid-provider",
-    install_requires=['python-webid>=0.2'],
+    install_requires=['python-webid>=0.2.0'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
