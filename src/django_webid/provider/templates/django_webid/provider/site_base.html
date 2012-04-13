@@ -10,7 +10,9 @@
 {% block login %}
 {% include "django_webid/provider/login_header.html" %}
 {% endblock %}
-
+{% block footer %}
+Powered by django. (c) 2012 Cooperative Quinode / RhizoLabs.
+{% endblock %}
 {% block extra_body_base %}
     {% block extra_body %}{% endblock %}
 {% endblock %}

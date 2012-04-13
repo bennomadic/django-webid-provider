@@ -9,13 +9,12 @@ except IOError:
     sys.exit(1)
 
 from django.conf import settings
-from django.conf.urls.defaults import patterns, include
+#from django.conf.urls.defaults import patterns, include
 from django.core.management import call_command
 
 setup_root = os.path.dirname(__file__)
 sys.path.insert(0, os.path.join(setup_root, "src"))
 sys.path.insert(0, os.path.join(setup_root, "examples"))
-
 
 
 def main():
@@ -35,12 +34,11 @@ def main():
         # Django replaces this, but it still wants it. *shrugs*
         DATABASE_ENGINE='sqlite3',
         SITE_ID=1,
-        SITE_DOMAIN = 'foafgen.net',
-        SITE_NAME = 'foafgen',
+        SITE_DOMAIN='foafgen.net',
+        SITE_NAME='foafgen',
 
-        AUTH_PROFILE_MODULE = 'django_webid.provider.WebIDBasicProfile',
-        ROOT_URLCONF = 'example_webid_provider.urls',
-
+        AUTH_PROFILE_MODULE='django_webid.provider.WebIDBasicProfile',
+        ROOT_URLCONF='example_webid_provider.urls',
     )
 
     # Fire off the tests

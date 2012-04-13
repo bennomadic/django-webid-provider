@@ -36,8 +36,9 @@ a WebID provider""",
     long_description=long_description,
     author='Ben Carrillo',
     author_email='bennomadic@gmail.com',
-    download_url='https://github.com/bennomadic/django-webid-provider/tarball/v0.1',
+    download_url='https://github.com/bennomadic/django-webid-provider/tarball/v0.2',
     url="https://github.com/bennomadic/django-webid-provider",
+    install_requires=['python-webid>=0.2'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
@@ -52,6 +53,6 @@ a WebID provider""",
         "Topic :: Security :: Cryptography",
     ],
     keywords='foaf, ssl, webid, x509, certificate, client certificate,\
-authentication, authorization,django',
+authentication, authorization, django',
     zip_safe=False,
 )

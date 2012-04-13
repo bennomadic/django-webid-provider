@@ -1,0 +1,91 @@
+{% extends "django_webid/provider/base.html" %}
+
+{% load i18n %}
+{% load uni_form_tags %}
+
+
+{% block head_title %}{% blocktrans %}WebID Cert Installation{% endblocktrans %}{% endblock %}
+
+{% block extra_head %}
+<script type="text/javascript" src="{{ MEDIA_URL }}django_webid/provider/js/jquery-1.7.min.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}django_webid/provider/js/jquery-ui-1.8.17.custom.min.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}django_webid/provider/js/jquery.browser.min.js"></script>
+<link rel="stylesheet" href="{{ MEDIA_URL }}django_webid/provider/js/css/ui-lightness/jquery-ui-1.8.17.custom.css" type="text/css" media="all" />
+{% endblock %}
+
+{% block body %}
+
+<script type="text/javascript">
+(function($) {
+$(document).ready(function($) {
+  //console.debug('ready')
+
+  $.ajaxSetup({ 
+     beforeSend: function(xhr, settings) {
+         function getCookie(name) {
+             var cookieValue = null;
+             if (document.cookie && document.cookie != '') {
+                 var cookies = document.cookie.split(';');
+                 for (var i = 0; i < cookies.length; i++) {
+                     var cookie = jQuery.trim(cookies[i]);
+                     // Does this cookie string begin with the name we want?
+                 if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                     break;
+                 }
+             }
+         }
+         return cookieValue;
+         }
+         if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+             // Only send the token to relative URLs i.e. locally.
+             xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+         }
+     } 
+  });
+
+
+  $("#nameit").click(function(event) {
+    event.preventDefault();
+    $.ajax({
+      url: "{% url webidprovider-nameit %}",
+      type: "POST",
+      data: {'certname': $("#certname").val()},
+      dataType: "json",
+      success: function(data) {
+	    //console.debug('ok');
+      	if(data.named===true){
+	  console.debug('named!');
+	  window.location = "{% url webidprovider-cert_list %}";
+	}
+      } 
+    });
+  });
+});
+})($);
+</script>
+
+<div class="middle_panel">
+    {% if sha1fingerprint %}
+    <h1>Your cert has been installed</h1>
+    <p>A certificate with sha-1 fingerprint <b>{{sha1fingerprint}}</b> has just been installed in your browser.</p>
+    {% comment %}
+    <p class="error">(Or, at least, it <em>should</em> have been installed. Check it, we're in alpha yet)...<br/> How can I check? (here goes link to browser-dependant manual verification)</p>
+    {% endcomment %}
+    <p>It is pointing to <a href="{% url webidprovider-webid_uri username=user.username %}">your WebID URI</a>, and from now on you can use it to login in any WebID-enabled site.</p>
+    {% endif %}
+    <p>{% trans "Enter some comment for your new cert" %}:
+    <input type="text" id="certname"/>
+    <input type="submit" id="nameit" value="{% trans 'Ok' %}"/>
+    </p>
+    {% comment %}
+    <p>Have fun!</p>
+    {% endcomment %}
+    <h2><a href="{% url webidprovider-cert_list %}">Back to your WebID certificates list</a></h2>
+</div>
+
+{% endblock %}
+
+{% block extra_body %}
+{% endblock %}
+

@@ -1,15 +1,15 @@
 from django.conf.urls.defaults import *
 from django.views.generic.simple import redirect_to
-from django.views.generic.list_detail import object_list
+#from django.views.generic.list_detail import object_list
 from django_webid.provider import views, webiduri
-from django_webid.provider.models import Cert
+#from django_webid.provider.models import Cert
 
 urlpatterns = patterns('',
     #Main, WORKING urls
 
     #temporary REDIRECT
     # XXX move to the sample project
-    url(r'^$', redirect_to, {'url':'cert/add'}),
+    url(r'^$', redirect_to, {'url': 'cert/add'}),
     url(r'^logout$', views.logout_view, name="webidprovider-logout"),
 
     ###################################
@@ -19,14 +19,24 @@ urlpatterns = patterns('',
     #be only active)
     url(r'^certs$', views.cert_list_by_user, name="webidprovider-cert_list"),
     url(r'^cert/add$', views.add_cert_to_user, name="webidprovider-add_cert"),
+    url(r'^cert/added$', views.cert_post_inst,
+        name="webidprovider-cert-postinst"),
     url(r'^cert/(?P<cert_id>\d+)/$', views.cert_detail,
         name="webidprovider-cert-detail"),
+
     url(r'^cert/(?P<cert_id>\d+)/revoke$', views.cert_revoke,
         name="webidprovider-cert-revoke"),
 
     #Our simple user creation view.
     #XXX we should move it to example site too.
     url(r'^user/add$', views.create_user, name='webidprovider-create_user'),
+
+    #ajax utility views
+    url(r'^ajax/checkcertdlvrd', views.check_cert_was_delivered,
+        name='webidprovider-checkcertdlvrd'),
+    url(r'^ajax/certnameit', views.cert_nameit,
+        name='webidprovider-nameit'),
+
 
     #WebID Profile / Foaf publishing...
     #XXX can we do some magic here? (asking settings, finstance)

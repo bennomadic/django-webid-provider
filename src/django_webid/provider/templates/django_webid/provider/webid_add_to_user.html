@@ -8,6 +8,9 @@
 
 {% block extra_head %}
 <script type="text/javascript" src="{{ MEDIA_URL }}django_webid/provider/js/jquery-1.7.min.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}django_webid/provider/js/jquery-ui-1.8.17.custom.min.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}django_webid/provider/js/jquery.browser.min.js"></script>
+<link rel="stylesheet" href="{{ MEDIA_URL }}django_webid/provider/js/css/ui-lightness/jquery-ui-1.8.17.custom.css" type="text/css" media="all" />
 <!--[if IE]>
   <script type="text/javascript" src="{{ MEDIA_URL }}django_webid/provider/js/explorer-keygen.js"></script>
 <![endif]-->
@@ -23,23 +26,25 @@
     </ul>
 {% endif %}
 
+<style>
+#dialog-progress {
+	display:hidden !important;
+}
+
+</style>
 
 <script type="text/javascript">
 
-	{% comment %}
-	we probably should disable button after 1st click
-	and in Chrome we should notify the user somehow
-	so she knows we're creating her cert...
-	it's silly, but nothing happens in the current Chrome...
-	{% endcomment %}
 	(function($) {
 	    $(document).ready(function($) {
 		    	{% comment %}
-			first "automated cert installation" attempt
 			var HIDE_KEYGEN_FORM should be passed from view (certconfig opt)
 			XXX should try with iframe also, this is a bit
 			buggy when page loads slowly.
 			{% endcomment %}
+			$('#dialog-progress').hide();
+			$('#dialog-continue').hide();
+			$('#dialog-newcert').hide();
 			{% if HIDE_KEYGEN_FORM %}
 			$('#webid-block').hide();
 			$('#autowebidinstall').click( function(event) {
@@ -47,14 +52,125 @@
 				$('#webid-keygen').click();
 				});
 			{% endif %}
-		        });
-			})($);
+
+			{% if numpubkeys > 0 %}
+			$("#dialog-newcert").dialog({
+				modal: true,
+				buttons: {
+				  Yes: function() {
+				    //console.debug('yes please')
+				    $(this).dialog("close");
+				    },
+				  No: function() {
+				    window.location = "{% url webidprovider-cert_list %}";
+				    //console.debug('no thanks')
+				    }
+				}
+			});
+			{% endif %}
+			
+{% comment %}
+
+SEVERAL WORKAROUNDS FOR CHROME UI bugs.
+
+* Chromium Issue #52949: Keygen should occur asynchronously and display UI feedback
+http://code.google.com/p/chromium/issues/detail?can=2&q=52949&colspec=ID%20Pri%20Mstone%20ReleaseBlock%20Area%20Feature%20Status%20Owner%20Summary&id=52949
+
+- we build a dialog in chrome, telling user about keygen in progress.
+- we disable button after 1st click.
+
+//XXX TODO: disable also the hover effect.
+(ugh... the UI is frozen, so the img does not "move"... ugliness everywhere...)
+{% endcomment %}
+
+function checkCertResponse(intervalID) {
+	$.ajax({url: '{% url django_webid.provider.views.check_cert_was_delivered %}',
+		dataType: "json",
+		success: function(data) {
+			//console.debug('checking data...');
+			if(data!=="undefined" && data.certdelivered === true) {
+				//console.debug('data was delivered :)!');
+				if($.browser.name === "chrome") {
+					$("#dialog-progress").dialog('close');
+				}
+				clearInterval(intervalID);
+				$("#dialog-continue").dialog({
+					modal: true,
+					buttons: {
+						Continue: function() {
+						  //$(this).dialog("close");
+						  window.location = "{% url django_webid.provider.views.cert_post_inst %}"
+					 	}
+					}
+				});
+				//console.debug('redirecting');
+			}
+		}});
+}
+
+function postCertCountdown(interval, selector) {
+	//XXX increase this countdown; net can be congested...
+	var c = 5; 
+	var intervalID = setInterval(function(){
+    	if (c>0){
+		//console.debug('counting ' + c);
+		checkCertResponse(intervalID);
+        	$(selector).html(c);
+        	c--;
+    	} else {
+		$("#dialog-progress").dialog('close');
+        	clearInterval(intervalID);
+    	}
+	}, interval);
+}
+			$("#webid-keygen").click( function(e) {
+				if($(this).hasClass('sent')){
+					e.preventDefault();
+					return false;
+				}
+				if($(this).hasClass('prevented')){
+					e.preventDefault();
+					if($.browser.name === "chrome") {
+						$("#dialog-progress").dialog();
+						//XXX modal breaks interaction?
+						//$("#dialog").dialog({modal:true});
+					}
+					$(this).removeClass('prevented');
+					setTimeout(function() {
+						$("#webid-keygen").click();
+						postCertCountdown(1000, "#timer");
+						}, 10); 
+				}else{
+					$(this).addClass('prevented');
+					$(this).addClass('sent');
+				}
+			});
+	    });
+	})($);
 </script>
+
+<div id="dialog-progress" title="Key Generation in Progress...">
+<p>{% trans "This may take some minutes. Please wait..." %}</p>
+<img src="{{ MEDIA_URL }}django_webid/provider/img/ajax-loader.gif"/>
+</div>
+
+<div id="dialog-continue" title="Certificate Installed">
+<p><span class="ui-icon ui-icon-circle-check" style="float:left;"></span>
+{% trans "Your certificate has been installed." %}</p>
+</div>
+
+<div id="dialog-newcert" title="Create a new cert?">
+{% trans "It looks like you already have created some other cert. Do you really want to create a new one?" %}</p>
+</div>
+
 
 <div class="middle_panel" id="webid-block">
 
     <h1>{% trans "Installing a WebID Certificate in your Browser" %}</h1>
-    <p>After clicking the "Give me a cert!" button, a certificate will be created and installed in your browser. This certificate will point to <a href="{% url webidprovider-webid_uri username=user %}"</a>your WebID URI</a> on this site, and you'll be able to use it to login in any WebID-enabled site.</p>
+    <p>After clicking the "Give me a cert!" button, a certificate will be created and installed in your browser. This certificate will point to <a href="{{ webiduser.absolute_webid_uri }}">your WebID URI</a> on this site, and you'll be able to use it to login in any WebID-enabled site.</p>
+    {% comment %}
+    <a href="{% url webidprovider-webid_uri username=user %}"</a>
+    {% endcomment %}
     <p>How should this cert installation step look like? (help links with screenshots)</p>
 
     {#% include "django_webid/provider/webid_intro.html" %#}
@@ -65,14 +181,15 @@
             <fieldset class="inlineLabels">
                 <div class="form_block">
                     <input type="hidden" name="action" value="keygen" />
-		    <keygen name="pubkey" challenge="{{ challenge }}">
-                    <input type="submit" value="{% trans "Give me a cert!" %}" name="keygen" id="webid-keygen"/>
+		    <keygen name="pubkey" challenge="{{ challenge }}" id="webid-keygentag">
+                    <input type="submit" class="prevented" value="{% trans "Give me a cert!" %}" name="keygen" id="webid-keygen"/>
                 </div>
             </fieldset>
         </form>
     </div>
 
 </div>
+<div id="timer" style="display:none;">timer!</div>
 
 {% if HIDE_KEYGEN_FORM %}
 <div>

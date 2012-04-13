@@ -1,3 +1,6 @@
+*** Eventually I will move many of the tests here to the python-webid
+*** cert-generation tests.
+
 1) Write test for KeyGen CERT creation
 	- We can control serial number since it's the first one in the db.
 	- We need to take control also of the DATETIME object (allow overriding).
